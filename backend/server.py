@@ -923,8 +923,11 @@ intelligent_tp_settler = IntelligentTPSettlerManager()
 
 class UltraProfessionalCryptoScout:
     def __init__(self):
-        self.market_aggregator = advanced_market_aggregator
+        # 🚀 OPTIMIZATION: Use optimized market aggregator with cache
+        self.market_aggregator = optimized_market_aggregator
         self.trending_updater = trending_auto_updater
+        # 🎯 Add API coordinator for pipeline optimization
+        self.api_coordinator = api_coordinator
         self.max_cryptos_to_analyze = 30  # Augmenté pour plus d'opportunités
         self.min_market_cap = 1_000_000    # $1M minimum (plus bas pour trending coins)
         self.min_volume_24h = 10_000       # $10K minimum (TRÈS ASSOUPLI - inclut small caps)
