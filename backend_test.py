@@ -1,31 +1,34 @@
 #!/usr/bin/env python3
 """
-GLOBAL CRYPTO MARKET ANALYZER INTEGRATION TESTING SUITE
-Focus: Complete testing of the new Global Crypto Market Analyzer integration
+REFACTORED SYSTEM PHASE 2 - MODULAR ARCHITECTURE TESTING SUITE
+Focus: Complete testing of the refactored system with event-driven modular architecture
 
 TESTING REQUIREMENTS FROM REVIEW REQUEST:
-1. Module Loading: Verify that the global_crypto_market_analyzer module is properly imported and accessible
-2. Global Market Data Fetching: Test the CoinGecko and Fear & Greed API integrations
-3. Market Regime Detection: Validate the automatic bull/bear/neutral market regime detection
-4. Sentiment Analysis: Test Fear & Greed index integration and sentiment classification
-5. IA1/IA2 Context Integration: Verify that global market context is properly injected into IA1 and IA2 prompts
-6. Admin Endpoints: Test the new `/admin/market/global` endpoint for monitoring
-7. Cache System: Verify that market data is cached appropriately (5-minute cache)
-8. Error Handling: Test fallback behavior when APIs are unavailable
+1. Architecture Comparison: Test GET /api/system/architecture-comparison endpoint
+2. Refactored System Status: Test GET /api/system/refactored/status endpoint
+3. Component Initialization: Test POST /api/system/refactored/initialize endpoint
+4. Event-Driven System Startup: Test POST /api/system/refactored/start endpoint
+5. Phase 1 Optimization Status: Test GET /api/system/optimization-status endpoint
+6. Regression Testing: Verify existing endpoints still work (/api/system/timing-info, /api/system/performance/cache-stats)
+7. Backwards Compatibility: Ensure complete compatibility with legacy system
+8. Performance Validation: Confirm optimized performance is maintained
 
 EXPECTED SYSTEM CAPABILITIES:
-- Real-time global crypto market conditions (market cap, volume, BTC dominance)
-- Fear & Greed index sentiment analysis
-- Bull/Bear market regime detection
-- Trading recommendations based on market conditions
-- Enhanced IA context with macro market awareness
+- Modular components: Scout, IA1, Events, Orchestrator
+- Event-driven pub/sub system
+- Legacy/refactored integration
+- Intelligent cache from Phase 1
+- Current mode: "legacy" (refactored system not yet initialized)
+- Refactoring endpoints accessible
+- Complete backwards compatibility
 
 TESTING APPROACH:
-- Call the global market analyzer functions directly
-- Test the admin endpoint `/admin/market/global`
-- Verify IA1/IA2 prompts now include global market context
-- Check that market regime influences trading decisions
-- Validate cache behavior and API rate limiting
+- Test all new refactored system endpoints
+- Validate system starts in legacy mode
+- Test component initialization and startup sequence
+- Verify backwards compatibility with existing endpoints
+- Check performance optimization status from Phase 1
+- Validate event-driven architecture functionality
 """
 
 import asyncio
