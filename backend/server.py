@@ -8478,6 +8478,178 @@ async def get_scout_info():
         logger.error(f"Error getting scout info: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get scout info: {str(e)}")
 
+# 🚀 PERFORMANCE MONITORING ENDPOINTS
+@app.get("/api/system/performance/cache-stats")
+async def get_cache_performance_stats():
+    """Get detailed cache performance statistics"""
+    try:
+        cache_stats = smart_cache.get_stats()
+        aggregator_metrics = optimized_market_aggregator.get_performance_metrics()
+        coordination_metrics = api_coordinator.get_coordination_metrics()
+        
+        return {
+            "status": "success",
+            "cache_performance": {
+                "hit_rate": f"{cache_stats['hit_rate']:.1%}",
+                "total_entries": cache_stats["total_entries"],
+                "cache_sizes": cache_stats["cache_sizes"],
+                "hits": cache_stats["stats"]["hits"],
+                "misses": cache_stats["stats"]["misses"],
+                "evictions": cache_stats["stats"]["evictions"],
+                "errors": cache_stats["stats"]["errors"]
+            },
+            "aggregator_performance": {
+                "api_calls_saved": aggregator_metrics["aggregator_metrics"]["api_calls_saved"],
+                "cache_hits": aggregator_metrics["aggregator_metrics"]["cache_hits"],
+                "batch_optimizations": aggregator_metrics["aggregator_metrics"]["batch_optimizations"],
+                "total_requests": aggregator_metrics["aggregator_metrics"]["total_requests"]
+            },
+            "api_coordination": {
+                "active_pipelines": coordination_metrics["active_pipelines"],
+                "api_calls_prevented": coordination_metrics["coordinator_metrics"]["api_calls_prevented"],
+                "pipeline_reuses": coordination_metrics["coordinator_metrics"]["pipeline_reuses"],
+                "predictive_caches": coordination_metrics["coordinator_metrics"]["predictive_caches"]
+            },
+            "timestamp": get_paris_time().strftime('%Y-%m-%d %H:%M:%S') + " (Paris)"
+        }
+    except Exception as e:
+        logger.error(f"Error getting cache performance stats: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get cache stats: {str(e)}")
+
+@app.get("/api/system/performance/test")
+async def run_performance_test():
+    """Run comprehensive performance test of optimization systems"""
+    try:
+        logger.info("🧪 Starting performance test via API endpoint")
+        
+        # Test with common symbols
+        test_symbols = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX']
+        
+        # Run comprehensive test
+        test_results = await performance_monitor.run_comprehensive_performance_test(test_symbols)
+        
+        return {
+            "status": "success",
+            "test_results": test_results,
+            "timestamp": get_paris_time().strftime('%Y-%m-%d %H:%M:%S') + " (Paris)"
+        }
+    except Exception as e:
+        logger.error(f"Error running performance test: {e}")
+        raise HTTPException(status_code=500, detail=f"Performance test failed: {str(e)}")
+
+@app.get("/api/system/performance/benchmark")
+async def run_optimization_benchmark():
+    """Benchmark optimized system vs baseline performance"""
+    try:
+        logger.info("🏁 Starting optimization benchmark via API endpoint")
+        
+        # Benchmark with top 5 symbols
+        benchmark_symbols = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP']
+        
+        # Run benchmark
+        benchmark_results = await performance_monitor.benchmark_vs_baseline(benchmark_symbols)
+        
+        return {
+            "status": "success",
+            "benchmark_results": benchmark_results,
+            "summary": {
+                "performance_improvement": f"{benchmark_results['improvement']['time_improvement_percent']:.1f}%",
+                "efficiency_multiplier": f"{benchmark_results['improvement']['efficiency_multiplier']:.1f}x",
+                "time_saved": f"{benchmark_results['improvement']['time_saved_seconds']:.2f}s"
+            },
+            "timestamp": get_paris_time().strftime('%Y-%m-%d %H:%M:%S') + " (Paris)"
+        }
+    except Exception as e:
+        logger.error(f"Error running optimization benchmark: {e}")
+        raise HTTPException(status_code=500, detail=f"Benchmark failed: {str(e)}")
+
+@app.get("/api/system/performance/summary")
+async def get_performance_summary():
+    """Get summary of performance metrics over last 24 hours"""
+    try:
+        summary = performance_monitor.get_performance_summary(hours=24)
+        
+        return {
+            "status": "success",
+            "performance_summary": summary,
+            "timestamp": get_paris_time().strftime('%Y-%m-%d %H:%M:%S') + " (Paris)"
+        }
+    except Exception as e:
+        logger.error(f"Error getting performance summary: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get performance summary: {str(e)}")
+
+@app.post("/api/system/performance/invalidate-cache")
+async def invalidate_system_cache():
+    """Manually invalidate system cache for testing purposes"""
+    try:
+        logger.info("🗑️ Manual cache invalidation requested")
+        
+        # Get stats before invalidation
+        stats_before = smart_cache.get_stats()
+        
+        # Invalidate all cache types
+        from smart_api_cache import CacheType
+        for cache_type in CacheType:
+            smart_cache.invalidate(cache_type)
+        
+        # Get stats after invalidation
+        stats_after = smart_cache.get_stats()
+        
+        return {
+            "status": "success",
+            "message": "Cache invalidated successfully",
+            "stats_before": {
+                "total_entries": stats_before["total_entries"],
+                "cache_sizes": stats_before["cache_sizes"]
+            },
+            "stats_after": {
+                "total_entries": stats_after["total_entries"],
+                "cache_sizes": stats_after["cache_sizes"]
+            },
+            "timestamp": get_paris_time().strftime('%Y-%m-%d %H:%M:%S') + " (Paris)"
+        }
+    except Exception as e:
+        logger.error(f"Error invalidating cache: {e}")
+        raise HTTPException(status_code=500, detail=f"Cache invalidation failed: {str(e)}")
+
+@app.get("/api/system/optimization-status")
+async def get_optimization_status():
+    """Get current status of all optimization systems"""
+    try:
+        cache_stats = smart_cache.get_stats()
+        coordination_metrics = api_coordinator.get_coordination_metrics()
+        
+        return {
+            "status": "success",
+            "optimization_systems": {
+                "smart_cache": {
+                    "status": "active",
+                    "hit_rate": f"{cache_stats['hit_rate']:.1%}",
+                    "total_entries": cache_stats["total_entries"],
+                    "performance": "good" if cache_stats["hit_rate"] > 0.7 else "needs_improvement"
+                },
+                "api_coordinator": {
+                    "status": "active",
+                    "active_pipelines": coordination_metrics["active_pipelines"],
+                    "api_calls_prevented": coordination_metrics["coordinator_metrics"]["api_calls_prevented"],
+                    "performance": "good" if coordination_metrics["coordinator_metrics"]["api_calls_prevented"] > 0 else "low_activity"
+                },
+                "optimized_aggregator": {
+                    "status": "active",
+                    "performance": "optimized"
+                }
+            },
+            "recommendations": {
+                "cache_hit_rate": f"Target: >70%, Current: {cache_stats['hit_rate']:.1%}",
+                "api_coordination": "Active pipeline reuse reduces API calls",
+                "batch_processing": "Batch operations improve efficiency"
+            },
+            "timestamp": get_paris_time().strftime('%Y-%m-%d %H:%M:%S') + " (Paris)"
+        }
+    except Exception as e:
+        logger.error(f"Error getting optimization status: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get optimization status: {str(e)}")
+
 # BingX Live Trading API Endpoints for trailing stops integration
 @app.get("/api/bingx/balance")
 async def get_bingx_account_balance():
