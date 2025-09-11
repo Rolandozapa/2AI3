@@ -43,6 +43,10 @@ from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 # Import our advanced market aggregator, BingX trading engine, trending auto-updater, technical pattern detector, enhanced OHLCV fetcher, and advanced trading strategies
 from advanced_market_aggregator import advanced_market_aggregator, ultra_robust_aggregator, MarketDataResponse
+# 🚀 OPTIMIZATION: Import optimized components
+from optimized_market_aggregator import optimized_market_aggregator, get_market_data_cached, preload_trending_cache
+from api_coordinator import api_coordinator, get_scout_data_coordinated, predictive_cache_symbols
+from smart_api_cache import smart_cache
 from bingx_symbol_fetcher import get_bingx_tradable_symbols, is_bingx_tradable, bingx_fetcher
 from bingx_official_engine import bingx_official_engine, BingXOrderSide, BingXOrderType, BingXPositionSide
 from trending_auto_updater import trending_auto_updater
