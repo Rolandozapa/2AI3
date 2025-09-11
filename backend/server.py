@@ -49,6 +49,13 @@ from performance_monitor import performance_monitor
 from smart_api_cache import smart_cache
 from api_coordinator import api_coordinator
 from optimized_market_aggregator import optimized_market_aggregator
+
+# 🏗️ PHASE 2: Import refactored system integration
+from refactored_system_integration import (
+    refactored_system_manager, initialize_refactored_components, 
+    start_refactored_components, get_refactored_system_status,
+    is_refactored_mode_active
+)
 from bingx_symbol_fetcher import get_bingx_tradable_symbols, is_bingx_tradable, bingx_fetcher
 from bingx_official_engine import bingx_official_engine, BingXOrderSide, BingXOrderType, BingXPositionSide
 from trending_auto_updater import trending_auto_updater
