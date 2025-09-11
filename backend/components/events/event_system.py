@@ -304,21 +304,31 @@ class EventBus:
     
     def get_stats(self) -> Dict[str, Any]:
         """Get event bus statistics"""
-        handler_stats = {}
-        for event_type, handlers in self._handlers.items():
-            handler_stats[event_type.value] = {
-                'count': len(handlers),
-                'total_calls': sum(h.call_count for h in handlers),
-                'total_errors': sum(h.error_count for h in handlers)
+        try:
+            handler_stats = {}
+            for event_type, handlers in self._handlers.items():
+                handler_stats[event_type.value] = {
+                    'count': len(handlers),
+                    'total_calls': sum(h.call_count for h in handlers),
+                    'total_errors': sum(h.error_count for h in handlers)
+                }
+            
+            return {
+                'stats': self._stats.copy(),
+                'handlers': handler_stats,
+                'queue_size': self._event_queue.qsize(),
+                'running': self._running,
+                'recent_events_count': len(self._event_history)
             }
-        
-        return {
-            'stats': self._stats.copy(),
-            'handlers': handler_stats,
-            'queue_size': self._event_queue.qsize(),
-            'running': self._running,
-            'recent_events_count': len(self._event_history)
-        }
+        except Exception as e:
+            logger.error(f"Error getting event bus stats: {e}")
+            return {
+                'stats': {'error': str(e)},
+                'handlers': {},
+                'queue_size': -1,
+                'running': False,
+                'recent_events_count': 0
+            }
     
     def get_recent_events(self, limit: int = 50) -> List[Dict[str, Any]]:
         """Get recent events from history"""
