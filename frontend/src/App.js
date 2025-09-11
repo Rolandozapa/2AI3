@@ -45,7 +45,11 @@ const TradingDashboard = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    // Load data after component mount with delay to ensure UI renders first
+    setTimeout(() => {
+      fetchData();
+    }, 1000);
+    
     const interval = setInterval(fetchData, 30000); // Refresh every 30 seconds
     return () => clearInterval(interval);
   }, []);
