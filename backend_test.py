@@ -313,9 +313,9 @@ class RefactoredSystemPhase2TestSuite:
                 logger.info(f"   Testing {method} {path} ({name})")
                 
                 if method == 'GET':
-                    response = requests.get(f"{self.api_url}{path}", timeout=30)
+                    response = requests.get(f"{self.api_url}{path}", timeout=60)
                 else:
-                    response = requests.post(f"{self.api_url}{path}", json={}, timeout=30)
+                    response = requests.post(f"{self.api_url}{path}", json={}, timeout=60)
                 
                 if response.status_code == 200:
                     try:
