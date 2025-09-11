@@ -10,7 +10,7 @@ const TradingDashboard = () => {
   const [decisions, setDecisions] = useState([]);
   const [performance, setPerformance] = useState({});
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed to false for immediate display
   const [isTrading, setIsTrading] = useState(false);
   const [activePositions, setActivePositions] = useState([]);
   const [executionMode, setExecutionMode] = useState('SIMULATION');
