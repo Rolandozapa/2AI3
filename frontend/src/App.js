@@ -5,10 +5,20 @@ import axios from 'axios';
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
 const TradingDashboard = () => {
-  const [opportunities, setOpportunities] = useState([]);
-  const [analyses, setAnalyses] = useState([]);
-  const [decisions, setDecisions] = useState([]);
-  const [performance, setPerformance] = useState({});
+  // Initialize with mock data for immediate display
+  const [opportunities, setOpportunities] = useState([
+    { symbol: 'BTCUSDT', current_price: 67234.56, price_change_24h: 2.34, volume_24h: 1234567890, market_cap: 1300000000000 },
+    { symbol: 'ETHUSDT', current_price: 3456.78, price_change_24h: -1.23, volume_24h: 987654321, market_cap: 400000000000 }
+  ]);
+  const [analyses, setAnalyses] = useState([
+    { symbol: 'BTCUSDT', signal: 'LONG', confidence: 0.85, risk_reward_ratio: 2.5, timestamp: new Date().toISOString() },
+    { symbol: 'ETHUSDT', signal: 'HOLD', confidence: 0.72, risk_reward_ratio: 1.8, timestamp: new Date().toISOString() }
+  ]);
+  const [decisions, setDecisions] = useState([
+    { symbol: 'BTCUSDT', signal: 'LONG', confidence: 0.90, entry_price: 67000, timestamp: new Date().toISOString() },
+    { symbol: 'ETHUSDT', signal: 'HOLD', confidence: 0.75, entry_price: 3450, timestamp: new Date().toISOString() }
+  ]);
+  const [performance, setPerformance] = useState({ total_trades: 45, win_rate: 68.5, profit: 1234.56 });
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [isTrading, setIsTrading] = useState(false);
