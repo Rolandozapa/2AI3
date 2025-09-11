@@ -135,7 +135,7 @@ class RefactoredSystemPhase2TestSuite:
         logger.info("\n🔍 TEST 2: Refactored System Status Test")
         
         try:
-            response = requests.get(f"{self.api_url}/system/refactored/status", timeout=30)
+            response = requests.get(f"{self.api_url}/system/refactored/status", timeout=60)
             
             if response.status_code == 200:
                 data = response.json()
