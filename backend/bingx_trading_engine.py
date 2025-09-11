@@ -111,7 +111,12 @@ class BingXTradingEngine:
         self.base_url = os.getenv('BINGX_BASE_URL', 'https://open-api.bingx.com')
         
         if not self.api_key or not self.secret_key:
-            raise ValueError("BingX API credentials are required")
+            logger.warning("BingX API credentials not found - running in simulation mode")
+            self.simulation_mode = True
+            self.trading_enabled = False
+        else:
+            self.simulation_mode = False
+            self.trading_enabled = True
         
         # Trading configuration
         self.default_leverage = 10
