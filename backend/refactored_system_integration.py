@@ -115,29 +115,52 @@ class RefactoredSystemManager:
     
     async def get_system_status(self) -> Dict[str, Any]:
         """Get comprehensive system status"""
-        status = {
-            'refactored_system': {
-                'active': self.is_refactored_mode_active(),
-                'initialized': self.initialization_complete,
-                'legacy_mode': self.legacy_mode,
-                'metrics': self.metrics.copy()
-            }
-        }
-        
-        # Add orchestrator status if available
-        if self.orchestrator:
-            status['orchestrator'] = self.orchestrator.get_system_status()
-        
-        # Add event bus status
-        status['event_bus'] = event_bus.get_stats()
-        
-        # Add performance monitoring status
         try:
-            status['performance'] = performance_monitor.get_performance_summary(hours=1)
+            status = {
+                'refactored_system': {
+                    'active': self.is_refactored_mode_active(),
+                    'initialized': self.initialization_complete,
+                    'legacy_mode': self.legacy_mode,
+                    'metrics': self.metrics.copy()
+                }
+            }
+            
+            # Add orchestrator status if available (avoid recursion)
+            if self.orchestrator and hasattr(self.orchestrator, 'get_system_status'):
+                try:
+                    orchestrator_status = self.orchestrator.get_system_status()
+                    status['orchestrator'] = orchestrator_status
+                except Exception as e:
+                    status['orchestrator'] = {'error': f'Status error: {str(e)}'}
+            
+            # Add event bus status (avoid recursion)
+            try:
+                if event_bus:
+                    status['event_bus'] = event_bus.get_stats()
+                else:
+                    status['event_bus'] = {'status': 'not_available'}
+            except Exception as e:
+                status['event_bus'] = {'error': f'Event bus error: {str(e)}'}
+            
+            # Add performance monitoring status (avoid recursion)
+            try:
+                status['performance'] = performance_monitor.get_performance_summary(hours=1)
+            except Exception as e:
+                status['performance'] = {'error': f'Performance monitor error: {str(e)}'}
+            
+            return status
+            
         except Exception as e:
-            status['performance'] = {'error': str(e)}
-        
-        return status
+            logger.error(f"Error in get_system_status: {e}")
+            return {
+                'error': f'System status error: {str(e)}',
+                'refactored_system': {
+                    'active': False,
+                    'initialized': False,
+                    'legacy_mode': True,
+                    'metrics': {}
+                }
+            }
     
     async def manual_trading_cycle(self) -> Dict[str, Any]:
         """Manually trigger a trading cycle"""
