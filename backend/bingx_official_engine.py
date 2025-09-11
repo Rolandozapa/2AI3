@@ -57,6 +57,7 @@ class BingXOfficialTradingEngine:
         self.api_key = os.environ.get('BINGX_API_KEY')
         self.secret_key = os.environ.get('BINGX_SECRET_KEY')
         self.base_url = os.environ.get('BINGX_BASE_URL', 'https://open-api.bingx.com')
+        self.simulation_mode = False  # Default to real trading mode
         
         if not self.api_key or not self.secret_key:
             logger.warning("BingX API credentials not found - running in simulation mode")
