@@ -40,15 +40,24 @@ const TradingDashboard = () => {
         axios.get(`${API}/api/backtest/status`)
       ]);
 
-      setOpportunities(opportunitiesRes.data.opportunities || []);
-      setAnalyses(analysesRes.data.analyses || []);
-      setDecisions(decisionsRes.data.decisions || []);
-      setPerformance(perfRes.data.performance || {});
+      // Update with real data when available
+      if (opportunitiesRes.data.opportunities && opportunitiesRes.data.opportunities.length > 0) {
+        setOpportunities(opportunitiesRes.data.opportunities);
+      }
+      if (analysesRes.data.analyses && analysesRes.data.analyses.length > 0) {
+        setAnalyses(analysesRes.data.analyses);
+      }
+      if (decisionsRes.data.decisions && decisionsRes.data.decisions.length > 0) {
+        setDecisions(decisionsRes.data.decisions);
+      }
+      
+      setPerformance(prev => ({ ...prev, ...perfRes.data.performance }));
       setActivePositions(positionsRes.data.data?.active_positions || []);
       setExecutionMode(modeRes.data.execution_mode || 'SIMULATION');
       setBacktestStatus(backtestStatusRes.data.data || null);
     } catch (error) {
       console.error('Error fetching data:', error);
+      // Keep using mock data if API fails
     } finally {
       setLoading(false);
     }
