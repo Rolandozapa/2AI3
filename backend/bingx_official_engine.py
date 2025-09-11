@@ -59,15 +59,24 @@ class BingXOfficialTradingEngine:
         self.base_url = os.environ.get('BINGX_BASE_URL', 'https://open-api.bingx.com')
         
         if not self.api_key or not self.secret_key:
-            logger.error("BingX API credentials not found in environment variables")
-            raise ValueError("BingX API credentials are required")
+            logger.warning("BingX API credentials not found - running in simulation mode")
+            self.simulation_mode = True
+            self.client = None
+            return
         
         # Initialize the official BingX client
-        self.client = BingXAsyncClient(
-            api_key=self.api_key,
-            api_secret=self.secret_key,
-            demo_trading=False  # Set to True for demo trading
-        )
+        try:
+            self.client = BingXAsyncClient(
+                api_key=self.api_key,
+                api_secret=self.secret_key,
+                demo_trading=False  # Set to True for demo trading
+            )
+            self.simulation_mode = False
+            logger.info("BingX client initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize BingX client: {e}")
+            self.simulation_mode = True
+            self.client = None
         
         logger.info("BingX Official Trading Engine initialized")
 
