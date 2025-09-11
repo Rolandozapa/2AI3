@@ -1118,7 +1118,7 @@ class UltraProfessionalCryptoScout:
             
             # 🎯 OPTIMIZATION: Predictive cache warm-up for trending symbols
             start_time = time.time()
-            await predictive_cache_symbols(self.trending_symbols)
+            # await predictive_cache_symbols(self.trending_symbols)  # Temporarily disabled
             cache_time = time.time() - start_time
             logger.info(f"⚡ Cache warm-up completed in {cache_time:.2f}s")
             
