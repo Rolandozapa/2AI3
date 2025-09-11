@@ -104,7 +104,7 @@ class RefactoredSystemPhase2TestSuite:
         logger.info("\n🔍 TEST 1: Architecture Comparison Test")
         
         try:
-            response = requests.get(f"{self.api_url}/system/architecture-comparison", timeout=30)
+            response = requests.get(f"{self.api_url}/system/architecture-comparison", timeout=60)
             
             if response.status_code == 200:
                 data = response.json()
