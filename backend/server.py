@@ -1181,6 +1181,151 @@ class UltraProfessionalCryptoScout:
             logger.error(f"Error in trend-focused market scan: {e}")
             return []
     
+    async def _scan_trending_opportunities_optimized(self) -> List[MarketOpportunity]:
+        """🚀 OPTIMIZED: Scan specifically for trending cryptocurrencies with cache coordination"""
+        opportunities = []
+        
+        try:
+            # Use batch market data fetch with cache optimization
+            batch_symbols = self.trending_symbols[:25]  # Limit to top 25 for efficiency
+            logger.debug(f"📊 Batch fetching trending data for {len(batch_symbols)} symbols")
+            
+            # Get batch market data using optimized aggregator
+            market_data_dict = await self.market_aggregator.get_batch_market_data_optimized(
+                batch_symbols, max_age=120  # 2 min max age for trending
+            )
+            
+            for symbol, market_data in market_data_dict.items():
+                try:
+                    symbol_base = symbol.replace('USDT', '').replace('USD', '')
+                    
+                    # Check for trending characteristics
+                    has_high_volatility = market_data.volatility > 0.05  # >5% volatility
+                    has_significant_move = abs(market_data.price_change_24h) > self.min_price_change_threshold
+                    has_volume_spike = market_data.volume_24h > 1_000_000  # Good volume
+                    
+                    if has_high_volatility and has_significant_move and has_volume_spike:
+                        # Convert to opportunity format
+                        opportunity = self._convert_response_to_opportunity(market_data)
+                        # Boost trending score for cache-optimized fetch
+                        opportunity.data_confidence = min(opportunity.data_confidence + 0.15, 1.0)
+                        opportunities.append(opportunity)
+                        
+                        logger.debug(f"✅ TRENDING CACHED: {symbol_base} - {market_data.price_change_24h:.2f}% change")
+                
+                except Exception as e:
+                    logger.warning(f"Error processing trending symbol {symbol}: {e}")
+                    continue
+            
+            logger.info(f"🚀 Optimized trending scan found {len(opportunities)} opportunities")
+            
+        except Exception as e:
+            logger.error(f"Error in optimized trending scan: {e}")
+            # Fallback to original method
+            return await self._scan_trending_opportunities()
+        
+        return opportunities
+    
+    async def _scan_momentum_opportunities_optimized(self) -> List[MarketOpportunity]:
+        """🚀 OPTIMIZED: Scan for high-momentum opportunities with cache coordination"""
+        opportunities = []
+        
+        try:
+            # Get broader market data with cache optimization
+            logger.debug("📈 Scanning momentum opportunities with cache coordination")
+            
+            # Use price-only cache for quick momentum screening
+            momentum_candidates = []
+            for symbol in self.trending_symbols:
+                try:
+                    # Quick price check for momentum screening
+                    current_price = await self.market_aggregator.get_price_only_optimized(
+                        symbol, max_age=60  # 1 min max age for momentum
+                    )
+                    if current_price:
+                        momentum_candidates.append(symbol)
+                except Exception as e:
+                    logger.debug(f"Price check failed for {symbol}: {e}")
+                    continue
+            
+            # Get full market data for momentum candidates
+            if momentum_candidates:
+                market_data_dict = await self.market_aggregator.get_batch_market_data_optimized(
+                    momentum_candidates[:15], max_age=90  # 1.5 min for momentum analysis
+                )
+                
+                for symbol, market_data in market_data_dict.items():
+                    try:
+                        # Check momentum criteria
+                        significant_move = abs(market_data.price_change_24h) > (self.min_price_change_threshold * 2)
+                        high_volume = market_data.volume_24h > 5_000_000  # Higher volume for momentum
+                        good_volatility = 0.03 < market_data.volatility < 0.15  # Sweet spot volatility
+                        
+                        if significant_move and high_volume and good_volatility:
+                            opportunity = self._convert_response_to_opportunity(market_data)
+                            # Boost momentum score
+                            opportunity.data_confidence = min(opportunity.data_confidence + 0.1, 1.0)
+                            opportunities.append(opportunity)
+                            
+                            logger.debug(f"💨 MOMENTUM CACHED: {symbol} - {market_data.price_change_24h:.2f}% move")
+                    
+                    except Exception as e:
+                        logger.warning(f"Error processing momentum symbol {symbol}: {e}")
+                        continue
+            
+            logger.info(f"💨 Optimized momentum scan found {len(opportunities)} opportunities")
+            
+        except Exception as e:
+            logger.error(f"Error in optimized momentum scan: {e}")
+            # Fallback to original method
+            return await self._scan_momentum_opportunities()
+        
+        return opportunities
+    
+    async def _scan_comprehensive_optimized(self) -> List[MarketOpportunity]:
+        """🚀 OPTIMIZED: Comprehensive market scan with cache coordination"""
+        opportunities = []
+        
+        try:
+            logger.info("🔍 Comprehensive optimized scan with batch processing")
+            
+            # Get top market cap symbols for comprehensive analysis
+            comprehensive_symbols = self.trending_symbols + [
+                'PEPE', 'SHIB', 'DOGE', 'FLOKI', 'WIF', 'BONK',  # Meme coins
+                'AR', 'FET', 'OCEAN', 'AGIX', 'RLC', 'CTXC',     # AI/Web3
+                'INJ', 'SEI', 'SUI', 'APTOS', 'CELO', 'ROSE'     # Layer 1
+            ]
+            
+            # Remove duplicates and limit
+            unique_symbols = list(dict.fromkeys(comprehensive_symbols))[:40]
+            
+            # Batch fetch with cache optimization
+            market_data_dict = await self.market_aggregator.get_batch_market_data_optimized(
+                unique_symbols, max_age=180  # 3 min max age for comprehensive
+            )
+            
+            for symbol, market_data in market_data_dict.items():
+                try:
+                    # Basic quality filters
+                    if (market_data.volume_24h > self.min_volume_24h and 
+                        market_data.market_cap and market_data.market_cap > self.min_market_cap):
+                        
+                        opportunity = self._convert_response_to_opportunity(market_data)
+                        opportunities.append(opportunity)
+                        
+                        logger.debug(f"📈 COMPREHENSIVE: {symbol} - Added to opportunities")
+                
+                except Exception as e:
+                    logger.warning(f"Error processing comprehensive symbol {symbol}: {e}")
+                    continue
+            
+            logger.info(f"🔍 Comprehensive optimized scan found {len(opportunities)} opportunities")
+            
+        except Exception as e:
+            logger.error(f"Error in comprehensive optimized scan: {e}")
+            
+        return opportunities
+    
     async def _scan_trending_opportunities(self) -> List[MarketOpportunity]:
         """Scan specifically for trending cryptocurrencies"""
         opportunities = []
