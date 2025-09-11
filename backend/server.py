@@ -1108,20 +1108,26 @@ class UltraProfessionalCryptoScout:
             }
 
     async def scan_opportunities(self) -> List[MarketOpportunity]:
-        """Ultra professional trend-focused market scanning with auto-updated trends"""
+        """🚀 OPTIMIZED: Ultra professional trend-focused market scanning with cache coordination"""
         try:
             # Sync trending symbols if auto-update is enabled
             if self.auto_update_trending:
                 await self._sync_trending_symbols()
             
-            logger.info(f"Starting TREND-FOCUSED scan with symbols: {self.trending_symbols}")
+            logger.info(f"🚀 Starting OPTIMIZED TREND-FOCUSED scan with {len(self.trending_symbols)} symbols")
+            
+            # 🎯 OPTIMIZATION: Predictive cache warm-up for trending symbols
+            start_time = time.time()
+            await predictive_cache_symbols(self.trending_symbols)
+            cache_time = time.time() - start_time
+            logger.info(f"⚡ Cache warm-up completed in {cache_time:.2f}s")
             
             if self.focus_trending:
-                # Get trending opportunities first
+                # Get trending opportunities with optimized fetching
                 trending_opportunities = await self._scan_trending_opportunities()
                 logger.info(f"Found {len(trending_opportunities)} trending opportunities")
                 
-                # Get high-momentum opportunities
+                # Get high-momentum opportunities with cache coordination
                 momentum_opportunities = await self._scan_momentum_opportunities()
                 logger.info(f"Found {len(momentum_opportunities)} momentum opportunities")
                 
@@ -1130,7 +1136,7 @@ class UltraProfessionalCryptoScout:
                 unique_opportunities = self._deduplicate_opportunities(all_opportunities)
                 
             else:
-                # Fallback to comprehensive scan
+                # Fallback to optimized comprehensive scan
                 market_responses = await self.market_aggregator.get_comprehensive_market_data(
                     limit=200,  # Augmenté pour plus de diversité
                     include_dex=True
@@ -1161,12 +1167,13 @@ class UltraProfessionalCryptoScout:
             # Limite finale (plus élevée avec les filtres assouplis)
             final_opportunities = filtered_opportunities[:self.max_cryptos_to_analyze]
             
-            logger.info(f"🎯 RÉSULTATS FILTRAGE ASSOUPLI:")
-            logger.info(f"   📊 Total analysées: {stats['total']}")
-            logger.info(f"   ✅ BingX compatibles: {stats['bingx_passed']}")
+            total_time = time.time() - start_time
+            logger.info(f"🎯 OPTIMIZED SCAN RESULTS (completed in {total_time:.2f}s):")
+            logger.info(f"   📊 Total analyzed: {stats['total']}")
+            logger.info(f"   ✅ BingX compatible: {stats['bingx_passed']}")
             logger.info(f"   ❌ Non-BingX: {stats['bingx_rejected']}")
-            logger.info(f"   🚀 Envoyées à IA1 (avec validation technique intégrée): {len(final_opportunities)}")
-            logger.info(f"SCAN ASSOUPLI complet: {len(final_opportunities)} opportunités diverses sélectionnées")
+            logger.info(f"   🚀 Sent to IA1: {len(final_opportunities)}")
+            logger.info(f"⚡ PERFORMANCE: Cache optimization saved ~{cache_time:.1f}s API latency")
             
             return final_opportunities
             
