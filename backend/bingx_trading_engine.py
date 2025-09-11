@@ -121,7 +121,6 @@ class BingXTradingEngine:
         # Trading configuration
         self.default_leverage = 10
         self.max_position_size = 0.1  # 10% of portfolio max
-        self.trading_enabled = True
         self.demo_mode = False  # Set to True for paper trading
         
         # Performance tracking
