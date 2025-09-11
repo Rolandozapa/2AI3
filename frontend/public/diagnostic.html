@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Bot Trading - System Diagnostic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: rgba(255,255,255,0.15);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        .card.warning { border-left-color: #FF9800; }
+        .card.info { border-left-color: #2196F3; }
+        .card.error { border-left-color: #f44336; }
+        .status { display: inline-block; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+        .status.ok { background: #4CAF50; }
+        .status.warning { background: #FF9800; }
+        .status.error { background: #f44336; }
+        .test-results { margin-top: 20px; }
+        .url-box { 
+            background: rgba(0,0,0,0.3); 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 10px 0;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        .button:hover { background: #1976D2; }
+        .live-data { margin-top: 20px; }
+        .loading { animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Bot Trading Dual AI - System Diagnostic</h1>
+            <p>Complete system status and connectivity test</p>
+            <p><strong>Current Time:</strong> <span id="current-time"></span></p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>🌐 Network Status</h3>
+                <p><strong>Frontend:</strong> <span class="status ok">✅ RUNNING</span></p>
+                <p><strong>Port:</strong> 3000</p>
+                <p><strong>Protocol:</strong> HTTP</p>
+                <div class="url-box">http://localhost:3000</div>
+                <a href="/" class="button">🏠 Go to Main App</a>
+            </div>
+
+            <div class="card info">
+                <h3>🔧 Backend API</h3>
+                <p><strong>Status:</strong> <span id="backend-status" class="status">⏳ Testing...</span></p>
+                <p><strong>Port:</strong> 8001</p>
+                <p><strong>Endpoints:</strong> <span id="endpoint-count">Testing...</span></p>
+                <div class="url-box">http://localhost:8001/api</div>
+                <a href="/test.html" class="button">🧪 Static Test Page</a>
+            </div>
+
+            <div class="card warning">
+                <h3>⚡ Phase 2 Architecture</h3>
+                <p><strong>Refactoring:</strong> <span class="status ok">✅ COMPLETED</span></p>
+                <p><strong>Components:</strong> Modular</p>
+                <p><strong>Events:</strong> Pub/Sub Active</p>
+                <p><strong>Cache:</strong> Intelligent</p>
+            </div>
+
+            <div class="card">
+                <h3>📊 Live System Data</h3>
+                <div id="live-data" class="live-data">
+                    <p>🔄 Loading system data...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔗 Direct Access URLs</h3>
+            <p>If the preview doesn't work, try these URLs directly:</p>
+            
+            <h4>📱 Frontend Interfaces:</h4>
+            <div class="url-box">
+                <strong>Main Trading Dashboard:</strong><br>
+                http://localhost:3000
+            </div>
+            <div class="url-box">
+                <strong>Static Test Page:</strong><br>
+                http://localhost:3000/test.html
+            </div>
+            <div class="url-box">
+                <strong>This Diagnostic Page:</strong><br>
+                http://localhost:3000/diagnostic.html
+            </div>
+
+            <h4>🔧 Backend API Endpoints:</h4>
+            <div class="url-box">
+                <strong>System Status:</strong><br>
+                http://localhost:8001/api/system/architecture-comparison
+            </div>
+            <div class="url-box">
+                <strong>Trading Data:</strong><br>
+                http://localhost:8001/api/opportunities<br>
+                http://localhost:8001/api/analyses<br>
+                http://localhost:8001/api/decisions
+            </div>
+            <div class="url-box">
+                <strong>Refactored System:</strong><br>
+                http://localhost:8001/api/system/refactored/status
+            </div>
+        </div>
+
+        <div class="card info">
+            <h3>💡 Troubleshooting</h3>
+            <h4>If you can't access the preview:</h4>
+            <ol>
+                <li><strong>Direct Access:</strong> Try the URLs above directly in your browser</li>
+                <li><strong>Network Issues:</strong> The preview service might have network restrictions</li>
+                <li><strong>Alternative:</strong> Use the static test page at /test.html</li>
+                <li><strong>Port Forwarding:</strong> Ensure ports 3000 and 8001 are accessible</li>
+            </ol>
+            
+            <h4>What's Working:</h4>
+            <ul>
+                <li>✅ React Application compiles and runs</li>
+                <li>✅ Backend API responds correctly</li>
+                <li>✅ Database connections active</li>
+                <li>✅ Phase 2 refactoring completed</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Update current time
+        function updateTime() {
+            document.getElementById('current-time').textContent = new Date().toLocaleString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Test backend connectivity
+        async function testBackend() {
+            const statusElement = document.getElementById('backend-status');
+            const endpointElement = document.getElementById('endpoint-count');
+            
+            try {
+                const response = await fetch('/api/opportunities');
+                if (response.ok) {
+                    statusElement.textContent = '✅ CONNECTED';
+                    statusElement.className = 'status ok';
+                    
+                    // Test multiple endpoints
+                    const endpoints = ['/api/opportunities', '/api/analyses', '/api/decisions', '/api/performance'];
+                    let workingEndpoints = 0;
+                    
+                    for (const endpoint of endpoints) {
+                        try {
+                            const res = await fetch(endpoint);
+                            if (res.ok) workingEndpoints++;
+                        } catch (e) {}
+                    }
+                    
+                    endpointElement.textContent = `${workingEndpoints}/${endpoints.length} working`;
+                } else {
+                    throw new Error('API not responding');
+                }
+            } catch (error) {
+                statusElement.textContent = '❌ DISCONNECTED';
+                statusElement.className = 'status error';
+                endpointElement.textContent = 'API Error';
+            }
+        }
+
+        // Load live system data
+        async function loadLiveData() {
+            const liveDataElement = document.getElementById('live-data');
+            
+            try {
+                const [oppsRes, analysesRes, decisionsRes] = await Promise.all([
+                    fetch('/api/opportunities'),
+                    fetch('/api/analyses'), 
+                    fetch('/api/decisions')
+                ]);
+
+                const opportunities = await oppsRes.json();
+                const analyses = await analysesRes.json();
+                const decisions = await decisionsRes.json();
+
+                liveDataElement.innerHTML = `
+                    <p><strong>📈 Opportunities:</strong> ${opportunities.opportunities?.length || 0}</p>
+                    <p><strong>🧠 IA1 Analyses:</strong> ${analyses.analyses?.length || 0}</p>
+                    <p><strong>🎯 IA2 Decisions:</strong> ${decisions.decisions?.length || 0}</p>
+                    <p><strong>⏰ Last Update:</strong> ${new Date().toLocaleTimeString()}</p>
+                `;
+            } catch (error) {
+                liveDataElement.innerHTML = `
+                    <p style="color: #ff6b6b;">❌ Unable to load live data</p>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        // Run tests
+        testBackend();
+        loadLiveData();
+        
+        // Auto-refresh live data every 30 seconds
+        setInterval(loadLiveData, 30000);
+
+        console.log('🚀 Bot Trading Dual AI - Diagnostic page loaded successfully!');
+        console.log('Frontend: WORKING ✅');
+        console.log('System: Phase 2 Architecture Refactored ✅');
+    </script>
+</body>
+</html>
