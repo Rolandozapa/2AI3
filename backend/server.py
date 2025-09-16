@@ -4963,7 +4963,7 @@ CONFLUENCE DATA FOR SCORING:
 - MFI: {analysis.mfi_value:.1f} ({'ACCUMULATION' if analysis.mfi_value < 30 else 'DISTRIBUTION' if analysis.mfi_value > 70 else 'NEUTRAL'})
 - VWAP: Position {analysis.vwap_position:+.2f}% ({'OVERSOLD' if analysis.vwap_position < -2 else 'OVERBOUGHT' if analysis.vwap_position > 2 else 'NEUTRAL'})
 - EMA Hierarchy: {analysis.ema_hierarchy.upper()} ({'BULLISH' if 'bull' in analysis.ema_hierarchy else 'BEARISH' if 'bear' in analysis.ema_hierarchy else 'NEUTRAL'})
-- Patterns: {analysis.patterns_detected} ({'BULLISH_MAJORITY' if len([p for p in analysis.patterns_detected if any(bull in p.lower() for bull in ['bullish', 'double_bottom', 'cup', 'ascending'])]) > len(analysis.patterns_detected)//2 else 'BEARISH_MAJORITY' if len([p for p in analysis.patterns_detected if any(bear in p.lower() for bear in ['bearish', 'double_top', 'head', 'descending'])]) > len(analysis.patterns_detected)//2 else 'MIXED'})
+- Patterns: {analysis.patterns_detected}
 
 KEY LEVELS FOR IA2 CALCULATIONS:
 - Current Price: ${current_price:.4f}
