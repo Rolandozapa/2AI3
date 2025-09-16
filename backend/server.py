@@ -5141,9 +5141,25 @@ IA2 STRATEGIC LEVELS (Confluence-based):
 - **Large Trades (>$10k)**: {dex_metrics.get('large_trades_count', 0)} trades
 - **Institutional Ratio**: {dex_metrics.get('institutional_ratio', 0):.1%} → {'STRONG INSTITUTIONAL' if dex_metrics.get('institutional_ratio', 0) > 0.4 else 'MODERATE INSTITUTIONAL' if dex_metrics.get('institutional_ratio', 0) > 0.2 else 'RETAIL DRIVEN'}
 
-📊 LAYER 2 - IA1 REFERENCE DATA (Confirmation only):
-- IA1 MFI: {analysis.mfi_value:.1f}, IA1 VWAP: {analysis.vwap_position:+.2f}%
-- IA1 RSI: {analysis.rsi:.1f}, IA1 MACD: {analysis.macd_trend.upper()}
+📊 LAYER 2 - IA1 COMPLETE TECHNICAL DATA (Full dataset):
+🎯 **MOMENTUM INDICATORS**:
+- IA1 RSI: {analysis.rsi:.1f} ({analysis.rsi_signal}) | IA1 Stochastic: {analysis.stochastic:.1f}%K ({analysis.stochastic_signal})
+- IA1 MACD: {analysis.macd_trend.upper()} | Line: {analysis.macd_line:.6f} | Histogram: {analysis.macd_histogram:.6f}
+
+💰 **INSTITUTIONAL INDICATORS**: 
+- IA1 MFI: {analysis.mfi_value:.1f} ({analysis.mfi_signal}) - Institution: {analysis.mfi_institution}
+- IA1 VWAP: ${analysis.vwap_price:.4f} | Position: {analysis.vwap_position:+.2f}% ({analysis.vwap_signal})
+
+📈 **TREND & EMA STRUCTURE**:
+- IA1 EMA Hierarchy: {analysis.ema_hierarchy} | Position: {analysis.ema_position} | Strength: {analysis.ema_strength:.0%}
+- IA1 EMA Cross: {analysis.ema_cross_signal} | Bollinger Position: {analysis.bollinger_position:+.2f}%
+
+🎯 **FIBONACCI & LEVELS**:
+- Fibonacci Level: {analysis.fibonacci_level:.3f} | Nearest: {analysis.fibonacci_nearest_level} | Direction: {analysis.fibonacci_trend_direction}
+- Support Levels: {analysis.support_levels[:3]} | Resistance Levels: {analysis.resistance_levels[:3]}
+
+⏰ **MULTI-TIMEFRAME**:
+- Dominant TF: {analysis.multi_timeframe_dominant} | Pattern: {analysis.multi_timeframe_pattern} | Confidence: {analysis.multi_timeframe_confidence:.0%}
 
 KEY PRICE LEVELS:
 - Current: ${current_price:.4f} | IA1 SL: ${analysis.stop_loss_price:.4f} | IA1 TP: ${analysis.take_profit_price:.4f}
