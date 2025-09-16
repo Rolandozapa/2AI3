@@ -5012,6 +5012,19 @@ class UltraProfessionalIA2DecisionAgent:
             ia1_confidence = analysis.analysis_confidence
             ia1_rr = analysis.risk_reward_ratio
             
+            # 🎯 IA2 INDEPENDENT DATA FETCHING
+            logger.info(f"🔍 IA2 fetching independent data for {symbol}...")
+            
+            # Fetch fresh OHLCV from CoinDesk
+            coindesk_data = await self.fetch_coindesk_ohlcv(symbol, days=30)
+            ia2_indicators = self.calculate_ia2_technical_indicators(coindesk_data, current_price) if coindesk_data else {}
+            
+            # Fetch DEX volume data from Dune
+            dune_data = await self.fetch_dune_dex_data(symbol)
+            dex_metrics = self.extract_dex_metrics(dune_data) if dune_data else {}
+            
+            logger.info(f"📊 IA2 independent data: CoinDesk indicators={len(ia2_indicators)}, Dune metrics={len(dex_metrics)}")
+            
             # 🎯 IA2 STRATEGIC LEVEL CALCULATION - Let IA2 decide with confluence data
             entry_price = current_price  # IA2 uses current market price as entry
             
