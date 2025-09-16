@@ -5037,8 +5037,11 @@ Your response MUST be ONLY a valid JSON object:
 {{
     "signal": "long" or "short" or "hold",
     "confidence": 0.XX (0.50 to 0.99),
-    "reasoning": "Count X/6 confluence: [list which indicators support/oppose]. Your analysis of IA1's levels and indicators",
-    "risk_level": "low" or "medium" or "high"
+    "confluence_score": +X,
+    "confluence_breakdown": "RSI=+1, MACD=0, MFI=+1, VWAP=-1, EMA=+1, Patterns=0",
+    "reasoning": "Score +X/6: [explain decision based on confluence rules]. IA2 RR: X.X vs IA1 RR: X.X",
+    "risk_level": "low" or "medium" or "high",
+    "ia2_calculated_rr": X.XX
 }}
 
 CRITICAL: Respond ONLY with valid JSON, no other text."""
