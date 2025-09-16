@@ -4706,6 +4706,40 @@ class UltraProfessionalIA2DecisionAgent:
             logger.error(f"❌ IA2 Dune DEX data fetch failed for {symbol}: {e}")
             return {}
     
+    def extract_dex_metrics(self, dune_data: dict) -> dict:
+        """Extract key DEX metrics from Dune Analytics data"""
+        try:
+            if not dune_data or 'result' not in dune_data:
+                return {}
+            
+            rows = dune_data.get('result', {}).get('rows', [])
+            if not rows:
+                return {}
+            
+            # Calculate DEX metrics
+            total_volume_24h = sum(float(row.get('volume_usd', 0)) for row in rows[-24:])  # Last 24 entries
+            avg_trade_size = sum(float(row.get('amount_usd', 0)) for row in rows) / len(rows) if rows else 0
+            unique_traders = len(set(row.get('trader', '') for row in rows if row.get('trader')))
+            
+            # Institutional activity indicators
+            large_trades = [row for row in rows if float(row.get('amount_usd', 0)) > 10000]  # >$10k trades
+            institutional_volume = sum(float(trade.get('amount_usd', 0)) for trade in large_trades)
+            institutional_ratio = institutional_volume / total_volume_24h if total_volume_24h > 0 else 0
+            
+            return {
+                'total_volume_24h': total_volume_24h,
+                'avg_trade_size': avg_trade_size,
+                'unique_traders': unique_traders,
+                'large_trades_count': len(large_trades),
+                'institutional_volume': institutional_volume,
+                'institutional_ratio': institutional_ratio,
+                'data_freshness': len(rows)
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ IA2 DEX metrics extraction failed: {e}")
+            return {}
+    
     def calculate_ia2_technical_indicators(self, ohlcv_data: dict, current_price: float) -> dict:
         """Calculate IA2's own technical indicators from fresh OHLCV data"""
         try:
