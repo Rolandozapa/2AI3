@@ -5161,8 +5161,10 @@ IA2 STRATEGIC LEVELS (Confluence-based):
 ⏰ **MULTI-TIMEFRAME**:
 - Dominant TF: {analysis.multi_timeframe_dominant} | Pattern: {analysis.multi_timeframe_pattern} | Confidence: {analysis.multi_timeframe_confidence:.0%}
 
-KEY PRICE LEVELS:
-- Current: ${current_price:.4f} | IA1 SL: ${analysis.stop_loss_price:.4f} | IA1 TP: ${analysis.take_profit_price:.4f}
+🎯 **LEVEL COMPARISON FOR OPTIMAL RR**:
+- **IA1 Levels**: Entry=${analysis.entry_price:.4f} | SL=${analysis.stop_loss_price:.4f} | TP=${analysis.take_profit_price:.4f} | RR={ia1_rr:.2f}:1
+- **IA2 Default**: Entry=${entry_price:.4f} | SL=${stop_loss:.4f} | TP=${tp1:.4f} | RR={rr_ratio:.2f}:1
+- **CHOOSE BETTER RR**: Use the levels that give higher RR for execution decision
 
 TASK: Strategic decision using HIERARCHICAL CONSENSUS MODEL (not simple confluence).
 
