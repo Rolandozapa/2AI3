@@ -105,13 +105,13 @@
 user_problem_statement: "Fix IA2 Decision Persistence: Complete database saving fix for IA2 decisions in server.py (including main orchestration and force-ia1-analysis endpoint) to ensure IA2 strategic decisions are properly stored in MongoDB"
 
 backend:
-  - task: "IA1 to IA2 Escalation System - 3 Voies Implementation"
+  - task: "IA2 Decision Persistence Database Fix"
     implemented: true
-    working: true
+    working: false
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         -working: false
         -agent: "testing"
