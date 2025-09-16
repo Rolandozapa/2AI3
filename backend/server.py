@@ -4990,11 +4990,13 @@ TASK: Strategic decision using 6-INDICATOR CONFLUENCE MATRIX with CLEAR EXECUTIO
 
 🚨 REMEMBER: Perfect confluence is rare. Good confluence + strong IA1 setup = EXECUTE!
 
-🎯 IA2 STRATEGIC LEVELS: Calculate YOUR own levels using confluence:
-- Entry: Current price
-- SL: Use strongest confluence level (EMA21, VWAP, or pattern level)
-- TP: Target 2.5:1 RR minimum with confluence resistance/support
-- Compare your RR vs IA1's RR - use the better one
+🎯 IA2 STRATEGIC APPROACH:
+- Don't seek perfection - markets are never 100% clear
+- Minor indicator conflicts are normal - focus on MAJORITY confluence
+- If IA1 has good RR (>2.0) + decent confluence (+2 or higher), EXECUTE
+- Only HOLD if confluence is truly weak (+1 or lower) or strongly negative
+
+CALCULATE your own RR if needed, but prioritize confluence scoring over perfect levels.
 
 EXAMPLES:
 - EXECUTE LONG: "Score +5/6: RSI(32)=+1, MACD(bullish)=+1, MFI(22)=+1, VWAP(-3.2%)=+1, EMA(strong_bull)=+1, Patterns(3 bullish)=+1. Strong confluence → LONG"
