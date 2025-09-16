@@ -2935,10 +2935,10 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
                     
                     # Vérifier que les niveaux sont logiques pour LONG (use real price, not opportunity price)
                     if stop_loss_price >= real_current_price:
-                        stop_loss_price = real_current_price * 0.95  # -5% fallback
+                        stop_loss_price = real_current_price * 0.94  # -6% fallback pour RR > 2.0
                         logger.warning(f"⚠️ LONG SL correction for {opportunity.symbol}: SL was above entry, using fallback")
                     if take_profit_price <= real_current_price:
-                        take_profit_price = real_current_price * 1.08  # +8% fallback
+                        take_profit_price = real_current_price * 1.144  # +14.4% fallback pour RR > 2.0
                         logger.warning(f"⚠️ LONG TP correction for {opportunity.symbol}: TP was below entry, using fallback")
                     
                     logger.info(f"📊 LONG NIVEAUX TECHNIQUES {opportunity.symbol}: Entry={real_current_price:.6f}, SL={stop_loss_price:.6f} ({((stop_loss_price/real_current_price)-1)*100:.1f}%), TP={take_profit_price:.6f} (+{((take_profit_price/real_current_price)-1)*100:.1f}%)")
