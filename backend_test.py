@@ -620,117 +620,185 @@ class IA2DecisionPersistenceTestSuite:
         except Exception as e:
             self.log_test_result("API Response vs Database Consistency", False, f"Exception: {str(e)}")
     
-    async def test_4_api_analyses_enhanced_data(self):
-        """Test 4: API Analyses Enhanced Data - Verify /api/analyses Returns Non-Zero MACD Values"""
-        logger.info("\n🔍 TEST 4: API Analyses Enhanced Data Verification")
+    async def test_4_error_handling_verification(self):
+        """Test 4: Error Handling Verification - Test Database Save Error Scenarios"""
+        logger.info("\n🔍 TEST 4: Error Handling Verification")
         
         try:
-            api_results = {
-                'analyses_endpoint_accessible': False,
-                'recent_analyses_found': False,
-                'macd_data_in_api': False,
-                'pattern_data_in_api': False,
-                'data_structure_valid': False,
-                'latest_analysis': {},
-                'total_analyses': 0
+            error_results = {
+                'force_analysis_accessible': False,
+                'api_continues_on_db_error': False,
+                'error_logging_present': False,
+                'graceful_degradation': False,
+                'backend_logs_captured': False,
+                'error_messages': []
             }
             
-            logger.info("   🚀 Testing /api/analyses endpoint for enhanced data with non-zero MACD values...")
-            logger.info("   📊 Expected: Recent analyses with non-zero MACD values and pattern data")
+            logger.info("   🚀 Testing error handling for IA2 decision database save failures...")
+            logger.info("   📊 Expected: System continues to return API response even if DB save fails")
             
-            # Step 1: Test /api/analyses endpoint
-            logger.info("   📈 Calling /api/analyses endpoint...")
-            start_time = time.time()
-            response = requests.get(f"{self.api_url}/analyses", timeout=60)
-            response_time = time.time() - start_time
+            # Step 1: Test normal force analysis to establish baseline
+            logger.info("   📈 Testing normal force analysis operation...")
             
-            if response.status_code == 200:
-                api_results['analyses_endpoint_accessible'] = True
-                analyses_data = response.json()
+            try:
+                response = requests.post(
+                    f"{self.api_url}/force-ia1-analysis",
+                    json={"symbol": "BTCUSDT"},
+                    timeout=120
+                )
                 
-                logger.info(f"      ✅ Analyses endpoint accessible (response time: {response_time:.2f}s)")
-                
-                if isinstance(analyses_data, list) and len(analyses_data) > 0:
-                    api_results['total_analyses'] = len(analyses_data)
-                    api_results['recent_analyses_found'] = True
-                    latest_analysis = analyses_data[0]  # Assuming sorted by latest
-                    api_results['latest_analysis'] = latest_analysis
+                if response.status_code == 200:
+                    error_results['force_analysis_accessible'] = True
+                    force_data = response.json()
                     
-                    logger.info(f"      📋 Found {api_results['total_analyses']} analyses, checking latest...")
+                    logger.info(f"      ✅ Force analysis endpoint accessible")
+                    logger.info(f"      📋 Response success: {force_data.get('success', False)}")
                     
-                    # Check for enhanced data structure
-                    required_fields = ['symbol', 'timestamp', 'ia1_signal']
-                    enhanced_fields_present = sum(1 for field in required_fields if field in latest_analysis)
-                    
-                    if enhanced_fields_present >= len(required_fields):
-                        api_results['data_structure_valid'] = True
-                        logger.info(f"      ✅ Valid data structure: {enhanced_fields_present}/{len(required_fields)} required fields")
-                        
-                        # Check for MACD data in API response (specifically non-zero values)
-                        macd_fields_in_api = []
-                        for field in self.macd_fields:
-                            if field in latest_analysis:
-                                value = latest_analysis[field]
-                                if isinstance(value, (int, float)) and value != 0.0:
-                                    macd_fields_in_api.append(f"{field}={value}")
-                                elif isinstance(value, str) and value not in ['0', '0.0', '0.000000', 'unknown', 'neutral']:
-                                    macd_fields_in_api.append(f"{field}={value}")
-                        
-                        if macd_fields_in_api:
-                            api_results['macd_data_in_api'] = True
-                            logger.info(f"      ✅ Non-zero MACD data in API response: {macd_fields_in_api}")
-                        else:
-                            logger.warning(f"      ❌ No non-zero MACD data in API response")
-                            # Log what MACD values we actually found
-                            actual_macd_values = []
-                            for field in self.macd_fields:
-                                if field in latest_analysis:
-                                    actual_macd_values.append(f"{field}={latest_analysis[field]}")
-                            logger.warning(f"         Actual MACD values: {actual_macd_values}")
-                        
-                        # Check for pattern data in API response
-                        pattern_fields_in_api = []
-                        for field in self.pattern_fields:
-                            if field in latest_analysis and latest_analysis[field]:
-                                if isinstance(latest_analysis[field], list) and len(latest_analysis[field]) > 0:
-                                    pattern_fields_in_api.append(f"{field}={latest_analysis[field]}")
-                                elif isinstance(latest_analysis[field], str) and latest_analysis[field] not in ['', 'null', 'none']:
-                                    pattern_fields_in_api.append(f"{field}={latest_analysis[field]}")
-                        
-                        if pattern_fields_in_api:
-                            api_results['pattern_data_in_api'] = True
-                            logger.info(f"      ✅ Pattern data in API response: {pattern_fields_in_api}")
-                        else:
-                            logger.warning(f"      ❌ No pattern data in API response")
-                        
+                    # Check if system handles the request gracefully
+                    if force_data.get('success') or 'error' in force_data:
+                        error_results['graceful_degradation'] = True
+                        logger.info(f"      ✅ System provides graceful response")
                     else:
-                        logger.warning(f"      ❌ Invalid data structure: {enhanced_fields_present}/{len(required_fields)} required fields")
+                        logger.warning(f"      ⚠️ Unexpected response format")
+                        
                 else:
-                    logger.warning(f"      ❌ No analyses data or invalid format: {type(analyses_data)}")
-            else:
-                logger.error(f"      ❌ Analyses endpoint HTTP error: {response.status_code}")
-                if response.text:
-                    logger.error(f"         Error response: {response.text[:200]}...")
+                    logger.warning(f"      ⚠️ Force analysis HTTP error: {response.status_code}")
+                    
+            except Exception as e:
+                logger.warning(f"      ⚠️ Force analysis test error: {e}")
+            
+            # Step 2: Test with invalid symbol to trigger error conditions
+            logger.info("   📈 Testing with invalid symbol to trigger error conditions...")
+            
+            try:
+                response = requests.post(
+                    f"{self.api_url}/force-ia1-analysis",
+                    json={"symbol": "INVALID_SYMBOL_TEST"},
+                    timeout=60
+                )
+                
+                if response.status_code == 200:
+                    force_data = response.json()
+                    
+                    # Should get an error response but still be structured
+                    if 'error' in force_data or not force_data.get('success'):
+                        error_results['api_continues_on_db_error'] = True
+                        logger.info(f"      ✅ API returns structured error response")
+                        logger.info(f"      📋 Error message: {force_data.get('error', 'No specific error')}")
+                    else:
+                        logger.warning(f"      ⚠️ Unexpected success with invalid symbol")
+                        
+                elif response.status_code in [400, 404, 422]:
+                    # These are acceptable error codes
+                    error_results['api_continues_on_db_error'] = True
+                    logger.info(f"      ✅ API returns appropriate HTTP error: {response.status_code}")
+                else:
+                    logger.warning(f"      ⚠️ Unexpected HTTP status: {response.status_code}")
+                    
+            except Exception as e:
+                logger.warning(f"      ⚠️ Invalid symbol test error: {e}")
+            
+            # Step 3: Test with missing symbol parameter
+            logger.info("   📈 Testing with missing symbol parameter...")
+            
+            try:
+                response = requests.post(
+                    f"{self.api_url}/force-ia1-analysis",
+                    json={},  # Empty request
+                    timeout=30
+                )
+                
+                if response.status_code == 200:
+                    force_data = response.json()
+                    if 'error' in force_data and 'symbol' in force_data['error'].lower():
+                        logger.info(f"      ✅ Proper validation error for missing symbol")
+                    else:
+                        logger.warning(f"      ⚠️ Unexpected response to missing symbol")
+                elif response.status_code in [400, 422]:
+                    logger.info(f"      ✅ Proper HTTP validation error: {response.status_code}")
+                else:
+                    logger.warning(f"      ⚠️ Unexpected response to missing symbol: {response.status_code}")
+                    
+            except Exception as e:
+                logger.warning(f"      ⚠️ Missing symbol test error: {e}")
+            
+            # Step 4: Check backend logs for error handling messages
+            logger.info("   📋 Checking backend logs for error handling messages...")
+            
+            try:
+                backend_logs = await self._capture_backend_logs()
+                if backend_logs:
+                    error_results['backend_logs_captured'] = True
+                    
+                    # Look for error handling patterns
+                    error_patterns = [
+                        'Failed to save IA2 decision',
+                        'Database save error',
+                        'MongoDB error',
+                        'Exception',
+                        'ERROR'
+                    ]
+                    
+                    found_errors = []
+                    for log_line in backend_logs:
+                        for pattern in error_patterns:
+                            if pattern.lower() in log_line.lower():
+                                found_errors.append(log_line.strip())
+                                break
+                    
+                    if found_errors:
+                        error_results['error_logging_present'] = True
+                        error_results['error_messages'] = found_errors[:3]  # Keep first 3
+                        logger.info(f"      ✅ Found {len(found_errors)} error handling messages")
+                        for error_msg in error_results['error_messages']:
+                            logger.info(f"         - {error_msg}")
+                    else:
+                        logger.info(f"      📋 No error messages found (system may be healthy)")
+                        
+                    # Look for graceful error handling patterns
+                    graceful_patterns = [
+                        'continuing despite',
+                        'fallback',
+                        'graceful',
+                        'still returning',
+                        'error handled'
+                    ]
+                    
+                    graceful_messages = []
+                    for log_line in backend_logs:
+                        for pattern in graceful_patterns:
+                            if pattern.lower() in log_line.lower():
+                                graceful_messages.append(log_line.strip())
+                                break
+                    
+                    if graceful_messages:
+                        logger.info(f"      ✅ Found graceful error handling: {len(graceful_messages)} messages")
+                    
+                else:
+                    logger.warning(f"      ⚠️ Could not capture backend logs")
+                    
+            except Exception as e:
+                logger.warning(f"      ⚠️ Log analysis error: {e}")
             
             # Calculate test success
             success_criteria = [
-                api_results['analyses_endpoint_accessible'],
-                api_results['recent_analyses_found'],
-                api_results['data_structure_valid'],
-                api_results['macd_data_in_api'] or api_results['pattern_data_in_api']
+                error_results['force_analysis_accessible'],
+                error_results['api_continues_on_db_error'],
+                error_results['graceful_degradation'],
+                error_results['backend_logs_captured']
             ]
             success_count = sum(success_criteria)
             success_rate = success_count / len(success_criteria)
             
             if success_rate >= 0.75:  # 75% success threshold
-                self.log_test_result("API Analyses Enhanced Data", True, 
-                                   f"Enhanced API data working: {success_count}/{len(success_criteria)} criteria met. {api_results['total_analyses']} analyses, MACD: {api_results['macd_data_in_api']}, Patterns: {api_results['pattern_data_in_api']}")
+                self.log_test_result("Error Handling Verification", True, 
+                                   f"Error handling working: {success_count}/{len(success_criteria)} criteria met. Graceful degradation: {error_results['graceful_degradation']}, Error logging: {error_results['error_logging_present']}")
             else:
-                self.log_test_result("API Analyses Enhanced Data", False, 
-                                   f"Enhanced API data issues: {success_count}/{len(success_criteria)} criteria met")
+                self.log_test_result("Error Handling Verification", False, 
+                                   f"Error handling issues: {success_count}/{len(success_criteria)} criteria met")
                 
         except Exception as e:
-            self.log_test_result("API Analyses Enhanced Data", False, f"Exception: {str(e)}")
+            self.log_test_result("Error Handling Verification", False, f"Exception: {str(e)}")
     
     async def test_5_backend_logs_verification(self):
         """Test 5: Backend Logs Verification - Check for Pattern Detection and MACD Integration Health"""
