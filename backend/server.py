@@ -2706,8 +2706,8 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
                 support_levels = self._find_support_levels(historical_data, opportunity.current_price)
                 resistance_levels = self._find_resistance_levels(historical_data, opportunity.current_price)
                 
-                primary_support = support_levels[0] if support_levels else opportunity.current_price * 0.97
-                primary_resistance = resistance_levels[0] if resistance_levels else opportunity.current_price * 1.03
+                primary_support = support_levels[0] if support_levels else opportunity.current_price * 0.94  # -6% support (plus large pour meilleur RR)
+                primary_resistance = resistance_levels[0] if resistance_levels else opportunity.current_price * 1.12  # +12% resistance (plus large pour meilleur RR)
                 
                 # Assignation des prix selon le signal
                 if ia1_signal.lower() == 'long':
