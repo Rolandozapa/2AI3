@@ -4629,6 +4629,8 @@ class UltraProfessionalIA2DecisionAgent:
         self.live_trading_enabled = True  # Set to False for simulation only
         self.max_risk_per_trade = 0.02  # 2% risk per trade
         self.active_position_manager = active_position_manager
+        self.coindesk_api_key = os.environ.get('COINDESK_API_KEY')
+        self.dune_api_key = os.environ.get('DUNE_API_KEY')
     
     def calculate_neutral_risk_reward(self, current_price: float, volatility: float, time_horizon: int = 1) -> dict:
         """
