@@ -4998,9 +4998,9 @@ RSI, MACD, Patterns → Use for CONFIRMATION only, don't let them block LAYER 1 
 🚨 KEY PRINCIPLE: SEEK CONSENSUS, NOT PERFECTION. If institutional indicators (MFI+VWAP) agree with trend context (EMA), EXECUTE!
 
 EXAMPLES:
-- EXECUTE LONG: "Score +5/6: RSI(32)=+1, MACD(bullish)=+1, MFI(22)=+1, VWAP(-3.2%)=+1, EMA(strong_bull)=+1, Patterns(3 bullish)=+1. Strong confluence → LONG"
-- EXECUTE SHORT: "Score +4/6: RSI(75)=+1, MACD(bearish)=+1, MFI(80)=+1, VWAP(+4%)=+1, EMA(neutral)=0, Patterns(mixed)=0. Good confluence → SHORT"  
-- HOLD: "Score +1/6: Only RSI supports, MFI(55)=0, VWAP(-0.5%)=0, EMA(neutral)=0, MACD(weak)=0, Patterns(mixed)=0. Weak confluence → HOLD"
+- EXECUTE LONG: "LAYER 1: MFI(22)=LONG + VWAP(-4%)=STRONG_LONG + EMA_CROSS=BULLISH + EMA_HIERARCHY=LONG_BIAS = 4/4 consensus → STRONG institutional agreement → LONG"
+- EXECUTE SHORT: "LAYER 1: MFI(78)=STRONG_SHORT + VWAP(+3.5%)=STRONG_SHORT + EMA_HIERARCHY=SHORT_BIAS = 3/4 consensus → MODERATE institutional agreement → SHORT"
+- HOLD: "LAYER 1: MFI(45)=NEUTRAL + VWAP(+0.8%)=NEUTRAL + EMA mixed signals = CONFLICTED → No clear institutional direction → HOLD"
 
 Your response MUST be ONLY a valid JSON object:
 {{
