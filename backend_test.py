@@ -208,7 +208,7 @@ class IA2DecisionPersistenceTestSuite:
                 logger.error(f"      ❌ Force analysis exception: {e}")
             
             # Step 4: Check database for new IA2 decision
-            if persistence_results['ia2_escalation_triggered'] and self.db:
+            if persistence_results['ia2_escalation_triggered'] and self.db is not None:
                 logger.info("   📊 Checking database for IA2 decision persistence...")
                 try:
                     # Wait a moment for database write
