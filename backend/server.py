@@ -4706,6 +4706,53 @@ class UltraProfessionalIA2DecisionAgent:
             logger.error(f"❌ IA2 Dune DEX data fetch failed for {symbol}: {e}")
             return {}
     
+    def calculate_ia2_technical_indicators(self, ohlcv_data: dict, current_price: float) -> dict:
+        """Calculate IA2's own technical indicators from fresh OHLCV data"""
+        try:
+            import pandas as pd
+            import numpy as np
+            
+            # Extract price data from CoinDesk format
+            data_points = ohlcv_data.get('data', [])
+            if not data_points:
+                return {}
+            
+            # Convert to DataFrame
+            df = pd.DataFrame(data_points)
+            if 'value' not in df.columns:
+                return {}
+                
+            prices = df['value'].astype(float)
+            
+            # Calculate IA2 Technical Indicators
+            indicators = {}
+            
+            # EMA 9 and EMA 21
+            if len(prices) >= 21:
+                indicators['ema_9'] = prices.ewm(span=9).mean().iloc[-1]
+                indicators['ema_21'] = prices.ewm(span=21).mean().iloc[-1]
+                indicators['ema_cross'] = 'GOLDEN' if indicators['ema_9'] > indicators['ema_21'] else 'DEATH'
+                
+            # SMA 50
+            if len(prices) >= 50:
+                indicators['sma_50'] = prices.rolling(window=50).mean().iloc[-1]
+                indicators['sma_trend'] = 'BULLISH' if current_price > indicators['sma_50'] else 'BEARISH'
+            
+            # Price position relative to key levels
+            if 'ema_21' in indicators:
+                indicators['price_vs_ema21'] = ((current_price - indicators['ema_21']) / indicators['ema_21']) * 100
+                
+            # Volatility (20-day)
+            if len(prices) >= 20:
+                indicators['volatility_20d'] = prices.pct_change().rolling(window=20).std().iloc[-1] * 100
+                
+            logger.info(f"✅ IA2 calculated technical indicators: EMA9={indicators.get('ema_9', 'N/A'):.4f}, EMA21={indicators.get('ema_21', 'N/A'):.4f}")
+            return indicators
+            
+        except Exception as e:
+            logger.error(f"❌ IA2 technical indicator calculation failed: {e}")
+            return {}
+    
     def calculate_neutral_risk_reward(self, current_price: float, volatility: float, time_horizon: int = 1) -> dict:
         """
         🎯 ADVANCED: Calculate risk/reward ratio without predefined direction
