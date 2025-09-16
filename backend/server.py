@@ -2332,12 +2332,17 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
             - Show how patterns confirm or contradict each other
             - Include pattern-specific price targets and stop-loss levels from multiple patterns
             
-            🎯 CRITICAL TECHNICAL LEVELS CALCULATION:
-            1. Use HISTORICAL DATA provided above to identify TESTED support/resistance levels:
-               - Look at recent swing highs/lows as proven levels
-               - Consider 30-day range position for context
-               - Factor in volume-weighted average price as dynamic level
-               - Use support/resistance test counts to validate level strength
+            🎯 CRITICAL TECHNICAL LEVELS & RR CALCULATION:
+            1. Use HISTORICAL DATA to identify TESTED support/resistance levels:
+               - Recent swing highs/lows as proven levels
+               - 30-day range position for context
+               - VWAP (${vwap:.4f}) as dynamic support/resistance
+               - EMA21 (${ema_21:.4f}) as trend support/resistance
+               
+            EXAMPLE CALCULATION:
+            If Entry=${real_current_price:.6f}, Support=${real_current_price*0.94:.6f}, Resistance=${real_current_price*1.12:.6f}:
+            - LONG RR = ({real_current_price*1.12:.6f}-{real_current_price:.6f})/({real_current_price:.6f}-{real_current_price*0.94:.6f}) = 2.0
+            - SHORT RR = ({real_current_price:.6f}-{real_current_price*0.94:.6f})/({real_current_price*1.12:.6f}-{real_current_price:.6f}) = 0.5
             2. For your recommendation, specify:
                - PRIMARY SUPPORT level (historically tested, not theoretical)
                - PRIMARY RESISTANCE level (historically tested, not theoretical)  
