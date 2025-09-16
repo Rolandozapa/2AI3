@@ -295,133 +295,167 @@ class IA2DecisionPersistenceTestSuite:
         except Exception as e:
             self.log_test_result("IA2 Decision Persistence via Force Analysis", False, f"Exception: {str(e)}")
     
-    async def test_2_macd_calculation_fix_verification(self):
-        """Test 2: MACD Calculation Fix - Verify Real MACD Values Instead of Zeros"""
-        logger.info("\n🔍 TEST 2: MACD Calculation Fix Verification")
+    async def test_2_database_persistence_verification(self):
+        """Test 2: Database Persistence Verification - Check MongoDB Structure and Logging"""
+        logger.info("\n🔍 TEST 2: Database Persistence Verification")
         
         try:
-            macd_results = {
-                'ia1_cycle_successful': False,
-                'macd_fields_present': False,
-                'macd_values_non_zero': False,
-                'macd_signal_meaningful': False,
-                'database_persistence': False,
-                'macd_data': {},
-                'analysis_id': None
+            db_results = {
+                'trading_decisions_collection_exists': False,
+                'recent_decisions_found': False,
+                'decision_structure_valid': False,
+                'timestamp_format_correct': False,
+                'logging_messages_found': False,
+                'sample_decision': {},
+                'total_decisions': 0
             }
             
-            logger.info("   🚀 Testing MACD calculation fix in IA1 analysis...")
-            logger.info("   📊 Expected: Real MACD values (not 0.000000) in analysis response")
+            logger.info("   🚀 Testing database persistence structure and logging...")
+            logger.info("   📊 Expected: trading_decisions collection with proper structure and timestamps")
             
-            # Step 1: Trigger IA1 cycle to generate new analysis with MACD fix
-            logger.info("   📈 Running IA1 cycle to generate analysis with MACD fix...")
-            start_time = time.time()
-            response = requests.post(f"{self.api_url}/run-ia1-cycle", timeout=120)
-            response_time = time.time() - start_time
+            if not self.db:
+                logger.error("      ❌ No database connection available")
+                self.log_test_result("Database Persistence Verification", False, "No database connection")
+                return
             
-            if response.status_code == 200:
-                cycle_data = response.json()
-                
-                if cycle_data.get('success'):
-                    macd_results['ia1_cycle_successful'] = True
-                    logger.info(f"      ✅ IA1 cycle successful (response time: {response_time:.2f}s)")
+            # Step 1: Check if trading_decisions collection exists
+            logger.info("   📊 Checking trading_decisions collection...")
+            try:
+                collections = await asyncio.to_thread(self.db.list_collection_names)
+                if 'trading_decisions' in collections:
+                    db_results['trading_decisions_collection_exists'] = True
+                    logger.info(f"      ✅ trading_decisions collection exists")
                     
-                    # Check if analysis data contains MACD fields
-                    analysis_data = cycle_data.get('analysis_data', {})
-                    if analysis_data:
-                        logger.info(f"      📋 Analysis data received: {len(str(analysis_data))} characters")
-                        
-                        # Check for MACD fields presence
-                        macd_fields_found = []
-                        for field in self.macd_fields:
-                            if field in analysis_data:
-                                macd_fields_found.append(field)
-                                macd_results['macd_data'][field] = analysis_data[field]
-                        
-                        if len(macd_fields_found) >= 2:  # At least 2 MACD fields present
-                            macd_results['macd_fields_present'] = True
-                            logger.info(f"      ✅ MACD fields present: {macd_fields_found}")
-                            
-                            # Check for non-zero MACD values
-                            non_zero_values = []
-                            for field, value in macd_results['macd_data'].items():
-                                if isinstance(value, (int, float)) and value != 0.0:
-                                    non_zero_values.append(f"{field}={value}")
-                                elif isinstance(value, str) and value not in ['0', '0.0', '0.000000', 'unknown', 'neutral']:
-                                    non_zero_values.append(f"{field}={value}")
-                            
-                            if non_zero_values:
-                                macd_results['macd_values_non_zero'] = True
-                                logger.info(f"      ✅ Non-zero MACD values found: {non_zero_values}")
-                                
-                                # Check for meaningful MACD signal
-                                macd_signal = macd_results['macd_data'].get('macd_signal', 'unknown')
-                                if macd_signal not in ['unknown', 'neutral', '0', 0, 0.0]:
-                                    macd_results['macd_signal_meaningful'] = True
-                                    logger.info(f"      ✅ Meaningful MACD signal: {macd_signal}")
-                                else:
-                                    logger.warning(f"      ⚠️ MACD signal still showing default: {macd_signal}")
-                            else:
-                                logger.warning(f"      ❌ All MACD values are zero or default: {macd_results['macd_data']}")
-                        else:
-                            logger.warning(f"      ❌ Insufficient MACD fields found: {macd_fields_found}")
-                    else:
-                        logger.warning(f"      ❌ No analysis data in IA1 cycle response")
+                    # Get total count
+                    total_count = await asyncio.to_thread(
+                        self.db.trading_decisions.count_documents, {}
+                    )
+                    db_results['total_decisions'] = total_count
+                    logger.info(f"      📋 Total trading decisions: {total_count}")
+                    
                 else:
-                    logger.warning(f"      ❌ IA1 cycle failed: {cycle_data.get('error', 'Unknown error')}")
-            else:
-                logger.error(f"      ❌ IA1 cycle HTTP error: {response.status_code}")
-                if response.text:
-                    logger.error(f"         Error response: {response.text[:200]}...")
+                    logger.warning(f"      ❌ trading_decisions collection not found")
+                    logger.info(f"      📋 Available collections: {collections}")
+                    
+            except Exception as e:
+                logger.error(f"      ❌ Error checking collections: {e}")
             
-            # Step 2: Verify database persistence of MACD data
-            if macd_results['ia1_cycle_successful'] and self.db:
-                logger.info("   📊 Checking database persistence of MACD data...")
+            # Step 2: Check recent decisions structure
+            if db_results['trading_decisions_collection_exists']:
+                logger.info("   📊 Checking recent trading decisions structure...")
                 try:
-                    # Get latest analysis from database
-                    latest_analysis = self.db.technical_analyses.find_one(
-                        {}, sort=[("timestamp", -1)]
+                    # Get recent decisions (last 24 hours)
+                    from datetime import datetime, timedelta
+                    cutoff_time = datetime.now() - timedelta(hours=24)
+                    
+                    recent_decisions = await asyncio.to_thread(
+                        lambda: list(self.db.trading_decisions.find(
+                            {"timestamp": {"$gte": cutoff_time}}
+                        ).sort("timestamp", -1).limit(5))
                     )
                     
-                    if latest_analysis:
-                        macd_results['analysis_id'] = latest_analysis.get('id', 'N/A')
-                        logger.info(f"      📋 Latest analysis found: {macd_results['analysis_id']}")
+                    if recent_decisions:
+                        db_results['recent_decisions_found'] = True
+                        db_results['sample_decision'] = recent_decisions[0]
+                        logger.info(f"      ✅ Found {len(recent_decisions)} recent decisions")
                         
-                        # Check for MACD fields in database
-                        db_macd_fields = []
-                        for field in self.macd_fields:
-                            if field in latest_analysis and latest_analysis[field] not in [None, 0, 0.0, '0', 'unknown']:
-                                db_macd_fields.append(f"{field}={latest_analysis[field]}")
+                        # Check structure of latest decision
+                        latest_decision = recent_decisions[0]
+                        required_fields = ['symbol', 'signal', 'confidence', 'timestamp', 'id']
+                        present_fields = [field for field in required_fields if field in latest_decision]
                         
-                        if db_macd_fields:
-                            macd_results['database_persistence'] = True
-                            logger.info(f"      ✅ MACD data persisted in database: {db_macd_fields}")
+                        if len(present_fields) >= 4:  # At least 4/5 required fields
+                            db_results['decision_structure_valid'] = True
+                            logger.info(f"      ✅ Decision structure valid: {present_fields}")
+                            
+                            # Check timestamp format
+                            timestamp_value = latest_decision.get('timestamp')
+                            if timestamp_value:
+                                if isinstance(timestamp_value, datetime):
+                                    db_results['timestamp_format_correct'] = True
+                                    logger.info(f"      ✅ Timestamp format correct: {timestamp_value}")
+                                elif isinstance(timestamp_value, str):
+                                    # Check if it's a Paris time string
+                                    if "Heure de Paris" in timestamp_value or len(timestamp_value) > 10:
+                                        db_results['timestamp_format_correct'] = True
+                                        logger.info(f"      ✅ Timestamp format correct (string): {timestamp_value}")
+                                    else:
+                                        logger.warning(f"      ⚠️ Timestamp format unclear: {timestamp_value}")
+                                else:
+                                    logger.warning(f"      ⚠️ Unexpected timestamp type: {type(timestamp_value)}")
+                            else:
+                                logger.warning(f"      ❌ No timestamp field found")
                         else:
-                            logger.warning(f"      ❌ No meaningful MACD data found in database")
+                            logger.warning(f"      ❌ Invalid decision structure: {present_fields}/{len(required_fields)} fields")
+                            logger.info(f"         Available fields: {list(latest_decision.keys())}")
                     else:
-                        logger.warning(f"      ❌ No analyses found in database")
+                        logger.warning(f"      ❌ No recent decisions found in last 24 hours")
+                        
+                        # Try to get any decisions
+                        any_decisions = await asyncio.to_thread(
+                            lambda: list(self.db.trading_decisions.find().sort("timestamp", -1).limit(1))
+                        )
+                        
+                        if any_decisions:
+                            logger.info(f"      📋 Found older decisions, latest: {any_decisions[0].get('timestamp', 'No timestamp')}")
+                        else:
+                            logger.warning(f"      ❌ No trading decisions found at all")
                         
                 except Exception as e:
-                    logger.error(f"      ❌ Database query error: {e}")
+                    logger.error(f"      ❌ Error checking recent decisions: {e}")
+            
+            # Step 3: Check backend logs for IA2 decision save messages
+            logger.info("   📋 Checking backend logs for IA2 decision save messages...")
+            try:
+                backend_logs = await self._capture_backend_logs()
+                if backend_logs:
+                    save_messages = []
+                    for log_line in backend_logs:
+                        if "IA2 DECISION SAVED" in log_line:
+                            save_messages.append(log_line.strip())
+                    
+                    if save_messages:
+                        db_results['logging_messages_found'] = True
+                        logger.info(f"      ✅ Found {len(save_messages)} IA2 decision save messages")
+                        for msg in save_messages[:2]:  # Show first 2
+                            logger.info(f"         - {msg}")
+                    else:
+                        logger.warning(f"      ❌ No IA2 decision save messages found in logs")
+                        
+                        # Check for any IA2 related messages
+                        ia2_messages = []
+                        for log_line in backend_logs:
+                            if "IA2" in log_line and ("decision" in log_line.lower() or "save" in log_line.lower()):
+                                ia2_messages.append(log_line.strip())
+                        
+                        if ia2_messages:
+                            logger.info(f"      📋 Found {len(ia2_messages)} other IA2 decision messages:")
+                            for msg in ia2_messages[:2]:
+                                logger.info(f"         - {msg}")
+                else:
+                    logger.warning(f"      ⚠️ Could not capture backend logs")
+            except Exception as e:
+                logger.warning(f"      ⚠️ Log check error: {e}")
             
             # Calculate test success
             success_criteria = [
-                macd_results['ia1_cycle_successful'],
-                macd_results['macd_fields_present'],
-                macd_results['macd_values_non_zero'] or macd_results['macd_signal_meaningful']
+                db_results['trading_decisions_collection_exists'],
+                db_results['recent_decisions_found'] or db_results['total_decisions'] > 0,
+                db_results['decision_structure_valid'],
+                db_results['timestamp_format_correct']
             ]
             success_count = sum(success_criteria)
             success_rate = success_count / len(success_criteria)
             
-            if success_rate >= 0.67:  # 67% success threshold
-                self.log_test_result("MACD Calculation Fix Verification", True, 
-                                   f"MACD fix working: {success_count}/{len(success_criteria)} criteria met. MACD data: {macd_results['macd_data']}")
+            if success_rate >= 0.75:  # 75% success threshold
+                self.log_test_result("Database Persistence Verification", True, 
+                                   f"Database persistence working: {success_count}/{len(success_criteria)} criteria met. Total decisions: {db_results['total_decisions']}, Structure valid: {db_results['decision_structure_valid']}")
             else:
-                self.log_test_result("MACD Calculation Fix Verification", False, 
-                                   f"MACD fix issues: {success_count}/{len(success_criteria)} criteria met. Data: {macd_results['macd_data']}")
+                self.log_test_result("Database Persistence Verification", False, 
+                                   f"Database persistence issues: {success_count}/{len(success_criteria)} criteria met. Total: {db_results['total_decisions']}")
                 
         except Exception as e:
-            self.log_test_result("MACD Calculation Fix Verification", False, f"Exception: {str(e)}")
+            self.log_test_result("Database Persistence Verification", False, f"Exception: {str(e)}")
     
     async def test_3_technical_indicators_integration(self):
         """Test 3: Technical Indicators Integration - Verify Enhanced OHLCV System Feeds Data"""
