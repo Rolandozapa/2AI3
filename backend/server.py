@@ -2957,9 +2957,9 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
                     
                     # Vérifier que les niveaux sont logiques pour SHORT
                     if stop_loss_price <= real_current_price:
-                        stop_loss_price = real_current_price * 1.05  # +5% fallback
+                        stop_loss_price = real_current_price * 1.06  # +6% fallback pour RR > 2.0
                     if take_profit_price >= real_current_price:
-                        take_profit_price = real_current_price * 0.92  # -8% fallback
+                        take_profit_price = real_current_price * 0.856  # -14.4% fallback pour RR > 2.0
                     
                     logger.info(f"📊 SHORT NIVEAUX TECHNIQUES {opportunity.symbol}: Entry={real_current_price:.6f}, SL={stop_loss_price:.6f} (+{((stop_loss_price/real_current_price)-1)*100:.1f}%), TP={take_profit_price:.6f} ({((take_profit_price/real_current_price)-1)*100:.1f}%)")
                 else:  # hold
