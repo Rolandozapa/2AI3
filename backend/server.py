@@ -2378,12 +2378,12 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
                 "recommendation": "long/short/hold - Base your decision on pattern confluence: LONG if predominantly bullish patterns, SHORT if predominantly bearish patterns, HOLD only if patterns are truly conflicting or neutral",
                 "risk_reward_analysis": {{
                     "entry_price": {real_current_price:.6f},
-                    "primary_support": 0.0,
-                    "primary_resistance": 0.0,
-                    "support_reasoning": "Explanation of why this support level is significant",
-                    "resistance_reasoning": "Explanation of why this resistance level is significant",
-                    "calculated_rr_bullish": 0.0,
-                    "calculated_rr_bearish": 0.0
+                    "primary_support": 0.0,  // Your calculated support level (not arbitrary %)
+                    "primary_resistance": 0.0,  // Your calculated resistance level (not arbitrary %)
+                    "support_reasoning": "Historical test data and technical justification",
+                    "resistance_reasoning": "Historical test data and technical justification", 
+                    "calculated_rr_bullish": 0.0,  // CALCULATE: (resistance-entry)/(entry-support)
+                    "calculated_rr_bearish": 0.0   // CALCULATE: (entry-support)/(resistance-entry)
                 }}
             }}
             
