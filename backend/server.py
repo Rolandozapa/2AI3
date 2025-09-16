@@ -4943,13 +4943,14 @@ TECHNICAL INDICATORS:
 - MACD: {analysis.macd_signal:.6f}
 - Patterns: {analysis.patterns_detected}
 
-TASK: Analyze this trade and provide your strategic decision.
+TASK: Evaluate IA1's technical levels and provide your strategic decision.
+Consider: Are the entry/SL/TP levels realistic? Does the RR make sense? Do indicators support the signal?
 
 Your response MUST be ONLY a valid JSON object:
 {{
     "signal": "long" or "short" or "hold",
     "confidence": 0.XX (0.50 to 0.99),
-    "reasoning": "Your strategic analysis in 1-2 sentences",
+    "reasoning": "Your analysis of IA1's levels and indicators",
     "risk_level": "low" or "medium" or "high"
 }}
 
