@@ -988,24 +988,24 @@ class IA2DecisionPersistenceTestSuite:
             return []
     
     async def run_comprehensive_test_suite(self):
-        """Run comprehensive Pattern Detection & MACD Fixes test suite"""
-        logger.info("🚀 Starting Pattern Detection System Fixes and MACD Calculation Issues Test Suite")
+        """Run comprehensive IA2 Decision Persistence Database Fix test suite"""
+        logger.info("🚀 Starting IA2 Decision Persistence Database Fix Test Suite")
         logger.info("=" * 80)
-        logger.info("📋 PATTERN DETECTION & MACD FIXES TEST SUITE")
-        logger.info("🎯 Testing: Pattern detection system fixes and MACD calculation issues")
-        logger.info("🎯 Expected: Pattern detection enabled, real MACD values, enhanced OHLCV integration")
+        logger.info("📋 IA2 DECISION PERSISTENCE DATABASE FIX TEST SUITE")
+        logger.info("🎯 Testing: IA2 decision persistence database fix in trading bot system")
+        logger.info("🎯 Expected: IA2 decisions saved to database via both force-ia1-analysis and main orchestration")
         logger.info("=" * 80)
         
         # Run all tests in sequence
-        await self.test_1_pattern_detection_system_fix()
-        await self.test_2_macd_calculation_fix_verification()
-        await self.test_3_technical_indicators_integration()
-        await self.test_4_api_analyses_enhanced_data()
-        await self.test_5_backend_logs_verification()
+        await self.test_1_ia2_decision_persistence_via_force_analysis()
+        await self.test_2_database_persistence_verification()
+        await self.test_3_api_response_vs_database_consistency()
+        await self.test_4_error_handling_verification()
+        await self.test_5_main_orchestration_comparison()
         
         # Summary
         logger.info("\n" + "=" * 80)
-        logger.info("📊 PATTERN DETECTION & MACD FIXES TEST SUMMARY")
+        logger.info("📊 IA2 DECISION PERSISTENCE DATABASE FIX TEST SUMMARY")
         logger.info("=" * 80)
         
         passed_tests = sum(1 for result in self.test_results if result['success'])
@@ -1027,16 +1027,16 @@ class IA2DecisionPersistenceTestSuite:
         requirements_status = {}
         
         for result in self.test_results:
-            if "Pattern Detection System Fix" in result['test']:
-                requirements_status['Pattern Detection System Re-enabled'] = result['success']
-            elif "MACD Calculation Fix" in result['test']:
-                requirements_status['MACD Calculation Fix (Real Values)'] = result['success']
-            elif "Technical Indicators Integration" in result['test']:
-                requirements_status['Enhanced OHLCV System Integration'] = result['success']
-            elif "API Analyses Enhanced Data" in result['test']:
-                requirements_status['API Endpoints with Non-Zero MACD Values'] = result['success']
-            elif "Backend Logs Verification" in result['test']:
-                requirements_status['Backend Integration Health'] = result['success']
+            if "IA2 Decision Persistence via Force Analysis" in result['test']:
+                requirements_status['IA2 Decision Persistence via force-ia1-analysis'] = result['success']
+            elif "Database Persistence Verification" in result['test']:
+                requirements_status['Database Structure and Logging'] = result['success']
+            elif "API Response vs Database Consistency" in result['test']:
+                requirements_status['API Response vs Database Consistency'] = result['success']
+            elif "Error Handling Verification" in result['test']:
+                requirements_status['Error Handling and Graceful Degradation'] = result['success']
+            elif "Main Orchestration Comparison" in result['test']:
+                requirements_status['Identical Logic in Both Endpoints'] = result['success']
         
         logger.info("🎯 CRITICAL REQUIREMENTS STATUS:")
         for requirement, status in requirements_status.items():
@@ -1050,22 +1050,23 @@ class IA2DecisionPersistenceTestSuite:
         logger.info(f"\n🏆 REQUIREMENTS SATISFACTION: {requirements_met}/{total_requirements}")
         
         if requirements_met == total_requirements:
-            logger.info("\n🎉 VERDICT: PATTERN DETECTION & MACD FIXES 100% SUCCESSFUL!")
-            logger.info("✅ Pattern detection system re-enabled - Yahoo Finance OHLCV working")
-            logger.info("✅ MACD calculation fix working - real values instead of zeros")
-            logger.info("✅ Enhanced OHLCV system properly feeding data to IA1 analysis")
-            logger.info("✅ API endpoints returning non-zero MACD values and pattern data")
-            logger.info("✅ Backend integration healthy with no critical errors")
+            logger.info("\n🎉 VERDICT: IA2 DECISION PERSISTENCE DATABASE FIX 100% SUCCESSFUL!")
+            logger.info("✅ IA2 decisions created via force-ia1-analysis are saved to database")
+            logger.info("✅ Database entry contains all required fields with correct timestamp")
+            logger.info("✅ Logging confirms successful database save")
+            logger.info("✅ API response and database entry are consistent")
+            logger.info("✅ Error handling works if database save fails")
+            logger.info("✅ Both force-ia1-analysis and main orchestration use identical persistence logic")
         elif requirements_met >= total_requirements * 0.8:
-            logger.info("\n⚠️ VERDICT: PATTERN DETECTION & MACD FIXES MOSTLY SUCCESSFUL")
-            logger.info("🔍 Minor issues may need attention for complete integration")
+            logger.info("\n⚠️ VERDICT: IA2 DECISION PERSISTENCE DATABASE FIX MOSTLY SUCCESSFUL")
+            logger.info("🔍 Minor issues may need attention for complete database persistence")
         elif requirements_met >= total_requirements * 0.6:
-            logger.info("\n⚠️ VERDICT: PATTERN DETECTION & MACD FIXES PARTIALLY SUCCESSFUL")
-            logger.info("🔧 Several requirements need attention for complete fixes")
+            logger.info("\n⚠️ VERDICT: IA2 DECISION PERSISTENCE DATABASE FIX PARTIALLY SUCCESSFUL")
+            logger.info("🔧 Several requirements need attention for complete database persistence")
         else:
-            logger.info("\n❌ VERDICT: PATTERN DETECTION & MACD FIXES NOT SUCCESSFUL")
-            logger.info("🚨 Major issues detected - pattern detection and MACD calculations not working properly")
-            logger.info("🚨 System needs significant fixes for pattern detection and MACD integration")
+            logger.info("\n❌ VERDICT: IA2 DECISION PERSISTENCE DATABASE FIX NOT SUCCESSFUL")
+            logger.info("🚨 Major issues detected - IA2 decisions not being saved to database properly")
+            logger.info("🚨 System needs significant fixes for IA2 decision persistence")
         
         return passed_tests, total_tests
 
