@@ -4948,8 +4948,18 @@ TECHNICAL INDICATORS:
 - Stochastic: {analysis.stochastic:.1f}%K ({analysis.stochastic_signal})
 - Patterns: {analysis.patterns_detected}
 
-TASK: Evaluate IA1's technical levels and provide your strategic decision.
-Consider: Are the entry/SL/TP levels realistic? Does the RR make sense? Do indicators support the signal?
+TASK: Evaluate IA1's technical levels using the 6-INDICATOR CONFLUENCE MATRIX and provide your strategic decision.
+
+CONFLUENCE ANALYSIS:
+1. **RSI + MACD**: Do momentum indicators align with IA1's signal?
+2. **MFI (Institutional)**: Does smart money flow support the direction?
+3. **VWAP (Precision)**: Is entry near optimal VWAP levels for good timing?
+4. **EMA Hierarchy**: Does multi-timeframe trend structure support the signal?
+5. **EMA Cross Signals**: Are Golden/Death crosses confirming momentum?
+6. **Pattern Confluence**: Do chart patterns align with technical indicators?
+
+Consider: Are the entry/SL/TP levels realistic? Does the RR make sense? Do ALL indicators support the signal?
+Minimum 4/6 confluence required for execution - count how many indicators support IA1's direction.
 
 Your response MUST be ONLY a valid JSON object:
 {{
