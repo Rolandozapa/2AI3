@@ -5516,6 +5516,19 @@ async def force_ia1_analysis(request: dict):
                     decision = await orchestrator.ia2.make_decision(target_opportunity, analysis, perf_stats)
                     if decision:
                         logger.info(f"✅ IA2 decision: {decision.signal} for {symbol}")
+                        
+                        # 🎯 SAVE IA2 DECISION TO DATABASE (CRITICAL FIX)
+                        try:
+                            decision_dict = decision.dict()
+                            decision_dict['timestamp'] = get_paris_time()
+                            
+                            # Save to MongoDB
+                            await db.trading_decisions.insert_one(decision_dict)
+                            logger.info(f"💾 IA2 DECISION SAVED: {symbol} → {decision.signal.value.upper()} in database")
+                            
+                        except Exception as save_error:
+                            logger.error(f"❌ Failed to save IA2 decision for {symbol}: {save_error}")
+                            
                         return {
                             "success": True, 
                             "message": f"IA1 analysis completed and escalated to IA2 for {symbol}",
