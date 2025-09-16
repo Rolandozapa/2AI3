@@ -5156,11 +5156,16 @@ TASK: Strategic decision using HIERARCHICAL CONSENSUS MODEL (not simple confluen
 3. **EMA9/SMA Multi-TF**: EMA9 > SMA = BULLISH MOMENTUM | EMA9 < SMA = BEARISH MOMENTUM
 4. **EMA Hierarchy**: strong_bull/weak_bull = LONG BIAS | strong_bear/weak_bear = SHORT BIAS
 
-🎯 CONSENSUS LOGIC:
-- If 3/4 LAYER 1 indicators agree → EXECUTE that direction (institutional consensus)
-- If 2/4 LAYER 1 agree + IA1 RR > 2.0 → EXECUTE (good setup with institutional backing)
-- If LAYER 1 is mixed but MFI + VWAP both agree → EXECUTE (smart money consensus)
-- Only HOLD if LAYER 1 is truly conflicted (2 LONG vs 2 SHORT) OR no clear institutional direction
+🎯 IA2 INDEPENDENT CONSENSUS LOGIC:
+- **TECHNICAL MOMENTUM**: Does IA2's EMA cross + SMA trend agree with direction?
+- **INSTITUTIONAL FLOW**: Does DEX institutional ratio + large trade activity support direction?
+- **PRECISION TIMING**: Is current price positioned well vs IA2's EMA21 for entry?
+- **VOLUME CONFIRMATION**: Does 24h DEX volume support the move size?
+
+EXECUTION RULES:
+- STRONG signals: IA2 technical + institutional + timing all align → EXECUTE
+- MODERATE signals: 2/3 factors align + IA1 RR > 2.0 → EXECUTE  
+- WEAK signals: Only 1/3 factors align or conflicting data → HOLD
 
 📊 LAYER 2 - CONFIRMATION INDICATORS (Support Layer, not blockers):
 RSI, MACD, Patterns → Use for CONFIRMATION only, don't let them block LAYER 1 decisions
