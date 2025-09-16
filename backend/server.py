@@ -2665,10 +2665,10 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
             if 'risk_reward_analysis' in ia1_complete_json and isinstance(ia1_complete_json['risk_reward_analysis'], dict):
                 rr_analysis = ia1_complete_json['risk_reward_analysis']
                 
-                # Extraire les niveaux techniques d'IA1
+                # Extraire les niveaux techniques d'IA1 avec fallbacks améliorés pour RR > 2.0
                 entry_price = float(rr_analysis.get('entry_price', opportunity.current_price))
-                primary_support = float(rr_analysis.get('primary_support', opportunity.current_price * 0.97))
-                primary_resistance = float(rr_analysis.get('primary_resistance', opportunity.current_price * 1.03))
+                primary_support = float(rr_analysis.get('primary_support', opportunity.current_price * 0.94))  # -6% pour meilleur RR
+                primary_resistance = float(rr_analysis.get('primary_resistance', opportunity.current_price * 1.144))  # +14.4% pour RR = 2.4:1
                 
                 # 🎯 ASSIGNATION DES PRIX SELON LE SIGNAL IA1
                 if ia1_signal.lower() == 'long':
