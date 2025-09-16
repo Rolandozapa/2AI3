@@ -5009,8 +5009,11 @@ CONFLUENCE ANALYSIS:
 5. **EMA Cross Signals**: Are Golden/Death crosses confirming momentum?
 6. **Pattern Confluence**: Do chart patterns align with technical indicators?
 
-Consider: Are the entry/SL/TP levels realistic? Does the RR make sense? Do ALL indicators support the signal?
-Minimum 4/6 confluence required for execution - count how many indicators support IA1's direction.
+LEVEL COMPARISON:
+- Compare IA1 (technical) vs IA2 (strategic confluence) levels
+- Which RR is more realistic given market conditions?
+- Do confluence indicators support IA1's direction?
+Minimum 4/6 confluence required for LONG/SHORT - count supporting indicators.
 
 EXAMPLES:
 - STRONG LONG: "6/6 confluence: RSI oversold recovery + MACD bullish + MFI accumulation + VWAP precision entry + perfect EMA hierarchy + Golden Cross momentum"
