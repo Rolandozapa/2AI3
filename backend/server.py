@@ -4971,24 +4971,22 @@ KEY LEVELS FOR IA2 CALCULATIONS:
 - IA1 Support: ${analysis.stop_loss_price:.4f} (IA1's calculation)
 - IA1 Resistance: ${analysis.take_profit_price:.4f} (IA1's calculation)
 
-TASK: Strategic decision using 6-INDICATOR CONFLUENCE MATRIX with CLEAR EXECUTION RULES.
+TASK: Strategic decision using HIERARCHICAL CONSENSUS MODEL (not simple confluence).
 
-🎯 CONFLUENCE SCORING (Count each as +1 if supportive, 0 if neutral, -1 if opposing):
-1. **RSI**: Oversold (<30) = +1 LONG | Overbought (>70) = +1 SHORT | Else = 0
-2. **MACD**: Positive trend = +1 LONG | Negative trend = +1 SHORT | Else = 0  
-3. **MFI**: <30 (accumulation) = +1 LONG | >70 (distribution) = +1 SHORT | Else = 0
-4. **VWAP**: <-2% (oversold) = +1 LONG | >+2% (overbought) = +1 SHORT | Else = 0
-5. **EMA Hierarchy**: Strong/weak bull = +1 LONG | Strong/weak bear = +1 SHORT | Else = 0
-6. **Patterns**: Majority bullish = +1 LONG | Majority bearish = +1 SHORT | Else = 0
+🏛️ LAYER 1 - INSTITUTIONAL & MULTI-TIMEFRAME DIRECTORS (Primary Decision Layer):
+1. **MFI (Institutional Flow)**: <25 = STRONG LONG | 25-40 = LONG | 60-75 = SHORT | >75 = STRONG SHORT
+2. **VWAP (Price Position)**: <-3% = STRONG LONG | -1% to -3% = LONG | +1% to +3% = SHORT | >+3% = STRONG SHORT  
+3. **EMA9/SMA Multi-TF**: EMA9 > SMA = BULLISH MOMENTUM | EMA9 < SMA = BEARISH MOMENTUM
+4. **EMA Hierarchy**: strong_bull/weak_bull = LONG BIAS | strong_bear/weak_bear = SHORT BIAS
 
-📊 EXECUTION RULES (BE PRAGMATIC, NOT PERFECTIONIST):
-- Score +3 to +6: EXECUTE IA1's signal (good confluence is enough)
-- Score +2: EXECUTE if IA1 confidence >70% AND IA1 RR >2.0 (moderate confluence + good setup)
-- Score +1: EXECUTE if IA1 confidence >80% AND IA1 RR >2.5 (weak confluence but strong setup)
-- Score 0: HOLD (neutral confluence)
-- Score -1 to -6: HOLD or REVERSE if strong counter-evidence
+🎯 CONSENSUS LOGIC:
+- If 3/4 LAYER 1 indicators agree → EXECUTE that direction (institutional consensus)
+- If 2/4 LAYER 1 agree + IA1 RR > 2.0 → EXECUTE (good setup with institutional backing)
+- If LAYER 1 is mixed but MFI + VWAP both agree → EXECUTE (smart money consensus)
+- Only HOLD if LAYER 1 is truly conflicted (2 LONG vs 2 SHORT) OR no clear institutional direction
 
-🚨 REMEMBER: Perfect confluence is rare. Good confluence + strong IA1 setup = EXECUTE!
+📊 LAYER 2 - CONFIRMATION INDICATORS (Support Layer, not blockers):
+RSI, MACD, Patterns → Use for CONFIRMATION only, don't let them block LAYER 1 decisions
 
 🎯 IA2 STRATEGIC APPROACH:
 - Don't seek perfection - markets are never 100% clear
