@@ -127,7 +127,7 @@ class IA2DecisionPersistenceTestSuite:
             
             # Step 1: Get current trading_decisions count before test
             initial_decisions_count = 0
-            if self.db:
+            if self.db is not None:
                 try:
                     initial_decisions_count = await asyncio.to_thread(
                         self.db.trading_decisions.count_documents, {}
