@@ -4939,8 +4939,13 @@ IA1 TECHNICAL LEVELS:
 - Calculated RR: {rr_ratio:.2f}:1
 
 TECHNICAL INDICATORS:
-- RSI: {analysis.rsi:.1f}
-- MACD: {analysis.macd_signal:.6f}
+- RSI: {analysis.rsi:.1f} ({analysis.rsi_signal})
+- MACD: {analysis.macd_signal:.6f} ({analysis.macd_trend})
+- MFI: {analysis.mfi_value:.1f} ({analysis.mfi_signal}) - Institution: {analysis.mfi_institution}
+- VWAP: ${analysis.vwap_price:.4f} | Position: {analysis.vwap_position:+.2f}% ({analysis.vwap_signal})
+- EMA Hierarchy: {analysis.ema_hierarchy} | Position: {analysis.ema_position} | Strength: {analysis.ema_strength:.0%}
+- EMA Cross: {analysis.ema_cross_signal}
+- Stochastic: {analysis.stochastic:.1f}%K ({analysis.stochastic_signal})
 - Patterns: {analysis.patterns_detected}
 
 TASK: Evaluate IA1's technical levels and provide your strategic decision.
