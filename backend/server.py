@@ -2700,14 +2700,57 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
                 }
                 
             else:
-                logger.warning(f"⚠️ No IA1 risk_reward_analysis found for {opportunity.symbol}, using fallback levels")
+                logger.warning(f"⚠️ No IA1 risk_reward_analysis found for {opportunity.symbol}, attempting reasoning extraction and using fallback levels")
                 
-                # 🔧 FALLBACK: Calcul basé sur support/résistance techniques détectés
-                support_levels = self._find_support_levels(historical_data, opportunity.current_price)
-                resistance_levels = self._find_resistance_levels(historical_data, opportunity.current_price)
+                # 🎯 TENTATIVE D'EXTRACTION DEPUIS LE REASONING IA1
+                primary_support = None
+                primary_resistance = None
                 
-                primary_support = support_levels[0] if support_levels else opportunity.current_price * 0.94  # -6% support (plus large pour meilleur RR)
-                primary_resistance = resistance_levels[0] if resistance_levels else opportunity.current_price * 1.12  # +12% resistance (plus large pour meilleur RR)
+                try:
+                    # Chercher des patterns "Entry: $X → Target: $Y" dans le reasoning
+                    import re
+                    reasoning = ia1_complete_json.get('reasoning', '')
+                    
+                    # Pattern: Entry: $X.XX → Target: $Y.YY
+                    entry_target_pattern = r'Entry:\s*\$([0-9.]+)\s*→\s*Target:\s*\$([0-9.]+)'
+                    match = re.search(entry_target_pattern, reasoning)
+                    
+                    if match:
+                        extracted_entry = float(match.group(1))
+                        extracted_target = float(match.group(2))
+                        
+                        logger.info(f"📊 EXTRACTED FROM REASONING {opportunity.symbol}: Entry=${extracted_entry:.6f}, Target=${extracted_target:.6f}")
+                        
+                        # Calculer support/resistance basé sur les niveaux extraits
+                        if ia1_signal.lower() == 'long':
+                            # LONG: Target = resistance, calculer support pour RR > 2.0
+                            primary_resistance = extracted_target
+                            # Pour RR = 2.5:1, Risk = (Target - Entry) / 2.5
+                            target_risk = (primary_resistance - real_current_price) / 2.5
+                            primary_support = real_current_price - target_risk
+                        elif ia1_signal.lower() == 'short':
+                            # SHORT: Target = support, calculer resistance pour RR > 2.0
+                            primary_support = extracted_target
+                            # Pour RR = 2.5:1, Risk = (Entry - Target) / 2.5
+                            target_risk = (real_current_price - primary_support) / 2.5
+                            primary_resistance = real_current_price + target_risk
+                        else:  # hold
+                            # HOLD: Utiliser les niveaux extraits directement
+                            primary_resistance = extracted_target
+                            primary_support = real_current_price - (primary_resistance - real_current_price)  # Symétrique
+                            
+                        logger.info(f"🎯 CALCULATED LEVELS FROM IA1 {opportunity.symbol}: Support=${primary_support:.6f}, Resistance=${primary_resistance:.6f}")
+                        
+                except Exception as e:
+                    logger.warning(f"⚠️ Failed to extract levels from reasoning for {opportunity.symbol}: {e}")
+                
+                # 🔧 FALLBACK si extraction a échoué: Calcul basé sur support/résistance techniques détectés
+                if primary_support is None or primary_resistance is None:
+                    support_levels = self._find_support_levels(historical_data, opportunity.current_price)
+                    resistance_levels = self._find_resistance_levels(historical_data, opportunity.current_price)
+                    
+                    primary_support = support_levels[0] if support_levels else opportunity.current_price * 0.94  # -6% support (plus large pour meilleur RR)
+                    primary_resistance = resistance_levels[0] if resistance_levels else opportunity.current_price * 1.12  # +12% resistance (plus large pour meilleur RR)
                 
                 # Assignation des prix selon le signal
                 if ia1_signal.lower() == 'long':
