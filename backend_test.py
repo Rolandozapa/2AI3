@@ -1071,8 +1071,8 @@ class IA2DecisionPersistenceTestSuite:
         return passed_tests, total_tests
 
 async def main():
-    """Main function to run the comprehensive Pattern Detection & MACD Fixes test suite"""
-    test_suite = PatternDetectionMACDTestSuite()
+    """Main function to run the comprehensive IA2 Decision Persistence Database Fix test suite"""
+    test_suite = IA2DecisionPersistenceTestSuite()
     passed_tests, total_tests = await test_suite.run_comprehensive_test_suite()
     
     # Exit with appropriate code
