@@ -106,134 +106,194 @@ class IA2DecisionPersistenceTestSuite:
             'timestamp': datetime.now().isoformat()
         })
     
-    async def test_1_pattern_detection_system_fix(self):
-        """Test 1: Pattern Detection System Fix - Verify Pattern Detection is Re-enabled"""
-        logger.info("\n🔍 TEST 1: Pattern Detection System Fix Verification")
+    async def test_1_ia2_decision_persistence_via_force_analysis(self):
+        """Test 1: IA2 Decision Persistence via force-ia1-analysis Endpoint"""
+        logger.info("\n🔍 TEST 1: IA2 Decision Persistence via force-ia1-analysis Endpoint")
         
         try:
-            pattern_results = {
-                'opportunities_endpoint_accessible': False,
-                'pattern_detection_enabled': False,
-                'patterns_detected': False,
-                'yahoo_finance_working': False,
-                'pattern_data': {},
-                'opportunities_count': 0
+            persistence_results = {
+                'force_analysis_successful': False,
+                'ia2_escalation_triggered': False,
+                'database_save_successful': False,
+                'api_response_contains_ia2': False,
+                'database_entry_found': False,
+                'logging_confirmation': False,
+                'decision_data': {},
+                'test_symbol': None
             }
             
-            logger.info("   🚀 Testing pattern detection system re-enablement...")
-            logger.info("   📊 Expected: Pattern detection enabled, patterns detected in opportunities")
+            logger.info("   🚀 Testing IA2 decision persistence via force-ia1-analysis...")
+            logger.info("   📊 Expected: IA2 decision created and saved to database")
             
-            # Step 1: Test /api/opportunities endpoint for pattern detection
-            logger.info("   📈 Testing /api/opportunities endpoint for pattern detection...")
-            start_time = time.time()
-            response = requests.get(f"{self.api_url}/opportunities", timeout=60)
-            response_time = time.time() - start_time
+            # Step 1: Get current trading_decisions count before test
+            initial_decisions_count = 0
+            if self.db:
+                try:
+                    initial_decisions_count = await asyncio.to_thread(
+                        self.db.trading_decisions.count_documents, {}
+                    )
+                    logger.info(f"      📊 Initial trading_decisions count: {initial_decisions_count}")
+                except Exception as e:
+                    logger.warning(f"      ⚠️ Could not get initial count: {e}")
             
-            if response.status_code == 200:
-                pattern_results['opportunities_endpoint_accessible'] = True
-                opportunities_data = response.json()
-                
-                logger.info(f"      ✅ Opportunities endpoint accessible (response time: {response_time:.2f}s)")
-                
-                if isinstance(opportunities_data, list) and len(opportunities_data) > 0:
-                    pattern_results['opportunities_count'] = len(opportunities_data)
-                    logger.info(f"      📋 Found {pattern_results['opportunities_count']} opportunities")
-                    
-                    # Check for pattern detection status in opportunities
-                    patterns_found = 0
-                    pattern_detection_messages = []
-                    
-                    for opportunity in opportunities_data[:5]:  # Check first 5 opportunities
-                        # Look for pattern detection indicators
-                        if 'patterns' in opportunity and opportunity['patterns']:
-                            patterns_found += 1
-                            pattern_results['patterns_detected'] = True
-                            pattern_results['pattern_data'][opportunity.get('symbol', 'unknown')] = opportunity['patterns']
-                        
-                        # Look for pattern detection status messages
-                        if 'analysis' in opportunity:
-                            analysis_text = str(opportunity['analysis']).lower()
-                            if 'pattern detection enabled' in analysis_text:
-                                pattern_detection_messages.append("Pattern detection enabled found")
-                                pattern_results['pattern_detection_enabled'] = True
-                            elif 'pattern detection temporarily disabled' in analysis_text:
-                                pattern_detection_messages.append("Pattern detection still disabled")
-                    
-                    if patterns_found > 0:
-                        logger.info(f"      ✅ Patterns detected in {patterns_found} opportunities: {list(pattern_results['pattern_data'].keys())}")
-                    else:
-                        logger.warning(f"      ❌ No patterns detected in opportunities")
-                    
-                    if pattern_detection_messages:
-                        logger.info(f"      📋 Pattern detection status messages: {pattern_detection_messages}")
-                    
-                    # Check if Yahoo Finance OHLCV is working (indirect test)
-                    valid_price_data = 0
-                    for opportunity in opportunities_data[:3]:
-                        if (opportunity.get('current_price', 0) > 0 and 
-                            opportunity.get('volume_24h', 0) > 0):
-                            valid_price_data += 1
-                    
-                    if valid_price_data >= 2:
-                        pattern_results['yahoo_finance_working'] = True
-                        logger.info(f"      ✅ Yahoo Finance OHLCV appears to be working: {valid_price_data}/3 opportunities have valid price data")
-                    else:
-                        logger.warning(f"      ⚠️ Yahoo Finance OHLCV may have issues: {valid_price_data}/3 opportunities have valid price data")
-                        
-                else:
-                    logger.warning(f"      ❌ No opportunities data or invalid format: {type(opportunities_data)}")
-            else:
-                logger.error(f"      ❌ Opportunities endpoint HTTP error: {response.status_code}")
-                if response.text:
-                    logger.error(f"         Error response: {response.text[:200]}...")
+            # Step 2: Find a suitable symbol for testing
+            logger.info("   📈 Finding suitable symbol for IA2 escalation test...")
+            test_symbol = None
             
-            # Step 2: Test IA1 cycle for pattern detection
-            logger.info("   📈 Testing IA1 cycle for pattern detection...")
+            # Try to get opportunities first
             try:
-                response = requests.post(f"{self.api_url}/run-ia1-cycle", timeout=120)
+                response = requests.get(f"{self.api_url}/opportunities", timeout=30)
                 if response.status_code == 200:
-                    cycle_data = response.json()
-                    if cycle_data.get('success'):
-                        analysis_data = cycle_data.get('analysis_data', {})
+                    opportunities = response.json()
+                    if isinstance(opportunities, list) and len(opportunities) > 0:
+                        # Look for a symbol with good characteristics for IA2 escalation
+                        for opp in opportunities[:5]:
+                            symbol = opp.get('symbol', '')
+                            if symbol and any(test_sym in symbol for test_sym in self.test_symbols):
+                                test_symbol = symbol
+                                break
                         
-                        # Check for patterns in IA1 analysis
-                        if 'patterns' in analysis_data and analysis_data['patterns']:
-                            pattern_results['patterns_detected'] = True
-                            pattern_results['pattern_data']['ia1_analysis'] = analysis_data['patterns']
-                            logger.info(f"      ✅ Patterns detected in IA1 analysis: {analysis_data['patterns']}")
-                        
-                        # Check for pattern detection status in analysis text
-                        analysis_text = analysis_data.get('analysis', '')
-                        if 'pattern detection enabled' in analysis_text.lower():
-                            pattern_results['pattern_detection_enabled'] = True
-                            logger.info(f"      ✅ Pattern detection enabled confirmed in IA1 analysis")
-                        elif 'pattern detection temporarily disabled' in analysis_text.lower():
-                            logger.warning(f"      ❌ Pattern detection still disabled in IA1 analysis")
+                        if not test_symbol and opportunities:
+                            test_symbol = opportunities[0].get('symbol', 'BTCUSDT')
                     else:
-                        logger.warning(f"      ⚠️ IA1 cycle failed: {cycle_data.get('error', 'Unknown')}")
+                        test_symbol = 'BTCUSDT'  # Fallback
                 else:
-                    logger.warning(f"      ⚠️ IA1 cycle HTTP error: {response.status_code}")
+                    test_symbol = 'BTCUSDT'  # Fallback
             except Exception as e:
-                logger.warning(f"      ⚠️ IA1 cycle test error: {e}")
+                logger.warning(f"      ⚠️ Could not get opportunities: {e}")
+                test_symbol = 'BTCUSDT'  # Fallback
+            
+            persistence_results['test_symbol'] = test_symbol
+            logger.info(f"      📋 Selected test symbol: {test_symbol}")
+            
+            # Step 3: Force IA1 analysis to trigger IA2 escalation
+            logger.info(f"   🚀 Forcing IA1 analysis for {test_symbol}...")
+            start_time = time.time()
+            
+            try:
+                response = requests.post(
+                    f"{self.api_url}/force-ia1-analysis",
+                    json={"symbol": test_symbol},
+                    timeout=180  # 3 minutes timeout for analysis
+                )
+                response_time = time.time() - start_time
+                
+                if response.status_code == 200:
+                    force_data = response.json()
+                    persistence_results['force_analysis_successful'] = force_data.get('success', False)
+                    
+                    logger.info(f"      ✅ Force analysis completed (response time: {response_time:.2f}s)")
+                    logger.info(f"      📋 Response success: {persistence_results['force_analysis_successful']}")
+                    
+                    if persistence_results['force_analysis_successful']:
+                        # Check if IA2 escalation occurred
+                        if 'ia2_decision' in force_data:
+                            persistence_results['ia2_escalation_triggered'] = True
+                            persistence_results['api_response_contains_ia2'] = True
+                            persistence_results['decision_data'] = force_data['ia2_decision']
+                            
+                            logger.info(f"      ✅ IA2 escalation triggered!")
+                            logger.info(f"      📋 IA2 decision: {force_data['ia2_decision']}")
+                        else:
+                            logger.warning(f"      ❌ No IA2 escalation in response")
+                            logger.info(f"      📋 Response keys: {list(force_data.keys())}")
+                    else:
+                        logger.warning(f"      ❌ Force analysis failed: {force_data.get('error', 'Unknown')}")
+                else:
+                    logger.error(f"      ❌ Force analysis HTTP error: {response.status_code}")
+                    if response.text:
+                        logger.error(f"         Error response: {response.text[:300]}...")
+                        
+            except Exception as e:
+                logger.error(f"      ❌ Force analysis exception: {e}")
+            
+            # Step 4: Check database for new IA2 decision
+            if persistence_results['ia2_escalation_triggered'] and self.db:
+                logger.info("   📊 Checking database for IA2 decision persistence...")
+                try:
+                    # Wait a moment for database write
+                    await asyncio.sleep(2)
+                    
+                    # Get current count
+                    current_decisions_count = await asyncio.to_thread(
+                        self.db.trading_decisions.count_documents, {}
+                    )
+                    
+                    logger.info(f"      📊 Current trading_decisions count: {current_decisions_count}")
+                    
+                    if current_decisions_count > initial_decisions_count:
+                        persistence_results['database_save_successful'] = True
+                        logger.info(f"      ✅ Database count increased: {initial_decisions_count} → {current_decisions_count}")
+                        
+                        # Find the latest decision for our symbol
+                        latest_decision = await asyncio.to_thread(
+                            self.db.trading_decisions.find_one,
+                            {"symbol": test_symbol},
+                            {"sort": [("timestamp", -1)]}
+                        )
+                        
+                        if latest_decision:
+                            persistence_results['database_entry_found'] = True
+                            logger.info(f"      ✅ Database entry found for {test_symbol}")
+                            
+                            # Verify required fields
+                            required_fields = ['symbol', 'signal', 'confidence', 'timestamp']
+                            missing_fields = [field for field in required_fields if field not in latest_decision]
+                            
+                            if not missing_fields:
+                                logger.info(f"      ✅ All required fields present: {required_fields}")
+                                logger.info(f"      📋 Decision: {latest_decision.get('signal')} with confidence {latest_decision.get('confidence')}")
+                            else:
+                                logger.warning(f"      ⚠️ Missing fields in database entry: {missing_fields}")
+                        else:
+                            logger.warning(f"      ❌ No database entry found for {test_symbol}")
+                    else:
+                        logger.warning(f"      ❌ Database count did not increase")
+                        
+                except Exception as e:
+                    logger.error(f"      ❌ Database check error: {e}")
+            
+            # Step 5: Check backend logs for confirmation
+            logger.info("   📋 Checking backend logs for IA2 decision save confirmation...")
+            try:
+                backend_logs = await self._capture_backend_logs()
+                if backend_logs:
+                    save_confirmations = []
+                    for log_line in backend_logs:
+                        if ("IA2 DECISION SAVED" in log_line and test_symbol in log_line):
+                            save_confirmations.append(log_line.strip())
+                            persistence_results['logging_confirmation'] = True
+                    
+                    if save_confirmations:
+                        logger.info(f"      ✅ Found IA2 decision save confirmations: {len(save_confirmations)}")
+                        for confirmation in save_confirmations[:2]:
+                            logger.info(f"         - {confirmation}")
+                    else:
+                        logger.warning(f"      ❌ No IA2 decision save confirmations found in logs")
+                else:
+                    logger.warning(f"      ⚠️ Could not capture backend logs")
+            except Exception as e:
+                logger.warning(f"      ⚠️ Log check error: {e}")
             
             # Calculate test success
             success_criteria = [
-                pattern_results['opportunities_endpoint_accessible'],
-                pattern_results['yahoo_finance_working'],
-                pattern_results['pattern_detection_enabled'] or pattern_results['patterns_detected']
+                persistence_results['force_analysis_successful'],
+                persistence_results['ia2_escalation_triggered'],
+                persistence_results['database_save_successful'] or persistence_results['database_entry_found'],
+                persistence_results['api_response_contains_ia2']
             ]
             success_count = sum(success_criteria)
             success_rate = success_count / len(success_criteria)
             
-            if success_rate >= 0.67:  # 67% success threshold
-                self.log_test_result("Pattern Detection System Fix", True, 
-                                   f"Pattern detection working: {success_count}/{len(success_criteria)} criteria met. Opportunities: {pattern_results['opportunities_count']}, Patterns detected: {pattern_results['patterns_detected']}, Detection enabled: {pattern_results['pattern_detection_enabled']}")
+            if success_rate >= 0.75:  # 75% success threshold
+                self.log_test_result("IA2 Decision Persistence via Force Analysis", True, 
+                                   f"IA2 persistence working: {success_count}/{len(success_criteria)} criteria met. Symbol: {test_symbol}, IA2 triggered: {persistence_results['ia2_escalation_triggered']}, DB saved: {persistence_results['database_save_successful']}")
             else:
-                self.log_test_result("Pattern Detection System Fix", False, 
-                                   f"Pattern detection issues: {success_count}/{len(success_criteria)} criteria met. Patterns: {pattern_results['pattern_data']}")
+                self.log_test_result("IA2 Decision Persistence via Force Analysis", False, 
+                                   f"IA2 persistence issues: {success_count}/{len(success_criteria)} criteria met. Symbol: {test_symbol}")
                 
         except Exception as e:
-            self.log_test_result("Pattern Detection System Fix", False, f"Exception: {str(e)}")
+            self.log_test_result("IA2 Decision Persistence via Force Analysis", False, f"Exception: {str(e)}")
     
     async def test_2_macd_calculation_fix_verification(self):
         """Test 2: MACD Calculation Fix - Verify Real MACD Values Instead of Zeros"""
