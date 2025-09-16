@@ -54,8 +54,8 @@ from pymongo import MongoClient
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-class PatternDetectionMACDTestSuite:
-    """Comprehensive test suite for Pattern Detection System Fixes and MACD Calculation Issues"""
+class IA2DecisionPersistenceTestSuite:
+    """Comprehensive test suite for IA2 Decision Persistence Database Fix"""
     
     def __init__(self):
         # Get backend URL from frontend env
