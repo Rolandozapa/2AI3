@@ -2978,12 +2978,12 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
                     logger.info(f"🔧 LONG FALLBACK TECHNIQUE {opportunity.symbol}: SL -6% (support), TP +14.4% (résistance) → RR ~2.4:1")
                     
                 elif ia1_signal.lower() == "short":
-                    # SHORT: Niveaux techniques standards indépendants de la confidence
-                    stop_loss_price = real_current_price * 1.05  # +5% stop loss (résistance technique)
-                    take_profit_price = real_current_price * 0.92  # -8% take profit (support technique)
-                    logger.info(f"🔍 SHORT TP CALCULATION for {opportunity.symbol}: real_current_price={real_current_price:.6f} * 0.92 = {take_profit_price:.6f}")
+                    # SHORT: Niveaux techniques pour RR > 2.0 (TARGET RR = 2.4:1)
+                    stop_loss_price = real_current_price * 1.06  # +6% stop loss (résistance technique)
+                    take_profit_price = real_current_price * 0.856  # -14.4% take profit (support technique) → RR = 2.4:1
+                    logger.info(f"🔍 SHORT TP CALCULATION for {opportunity.symbol}: real_current_price={real_current_price:.6f} * 0.856 = {take_profit_price:.6f}")
                     
-                    logger.info(f"🔧 SHORT FALLBACK TECHNIQUE {opportunity.symbol}: SL +5% (résistance), TP -8% (support)")
+                    logger.info(f"🔧 SHORT FALLBACK TECHNIQUE {opportunity.symbol}: SL +6% (résistance), TP -14.4% (support) → RR ~2.4:1")
                     
                 else:  # hold
                     # HOLD: Niveaux neutres techniques
