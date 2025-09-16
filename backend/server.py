@@ -5127,20 +5127,26 @@ IA2 STRATEGIC LEVELS (Confluence-based):
 - Take Profit: ${tp1:.4f}
 - IA2 RR: {rr_ratio:.2f}:1
 
-🏛️ LAYER 1 - INSTITUTIONAL & MULTI-TF DIRECTORS:
-- **MFI (Institutional)**: {analysis.mfi_value:.1f} → {'STRONG LONG' if analysis.mfi_value < 25 else 'LONG' if analysis.mfi_value < 40 else 'SHORT' if analysis.mfi_value > 60 else 'STRONG SHORT' if analysis.mfi_value > 75 else 'NEUTRAL'}
-- **VWAP (Position)**: {analysis.vwap_position:+.2f}% → {'STRONG LONG' if analysis.vwap_position < -3 else 'LONG' if analysis.vwap_position < -1 else 'SHORT' if analysis.vwap_position > 1 else 'STRONG SHORT' if analysis.vwap_position > 3 else 'NEUTRAL'}
-- **EMA Cross Signals**: {getattr(analysis, 'ema_cross_signal', 'UNKNOWN')} → {'BULLISH MOMENTUM' if 'golden' in str(getattr(analysis, 'ema_cross_signal', '')).lower() else 'BEARISH MOMENTUM' if 'death' in str(getattr(analysis, 'ema_cross_signal', '')).lower() else 'NEUTRAL MOMENTUM'}
-- **EMA Hierarchy**: {analysis.ema_hierarchy.upper()} → {'LONG BIAS' if 'bull' in analysis.ema_hierarchy else 'SHORT BIAS' if 'bear' in analysis.ema_hierarchy else 'NEUTRAL BIAS'}
+🏛️ LAYER 1 - IA2 INDEPENDENT INSTITUTIONAL ANALYSIS:
 
-📊 LAYER 2 - CONFIRMATION INDICATORS (Support only):
-- RSI: {analysis.rsi:.1f}, MACD: {analysis.macd_trend.upper()}, Patterns: {len(analysis.patterns_detected)} detected
+📊 IA2 FRESH TECHNICAL INDICATORS (CoinDesk data):
+- **IA2 EMA9**: ${ia2_indicators.get('ema_9', 'N/A'):.4f} vs **IA2 EMA21**: ${ia2_indicators.get('ema_21', 'N/A'):.4f}
+- **IA2 EMA Cross**: {ia2_indicators.get('ema_cross', 'UNKNOWN')} → {'BULLISH MOMENTUM' if ia2_indicators.get('ema_cross') == 'GOLDEN' else 'BEARISH MOMENTUM' if ia2_indicators.get('ema_cross') == 'DEATH' else 'NEUTRAL'}
+- **IA2 SMA50**: ${ia2_indicators.get('sma_50', 'N/A'):.4f} → {ia2_indicators.get('sma_trend', 'UNKNOWN')}
+- **Price vs EMA21**: {ia2_indicators.get('price_vs_ema21', 0):+.2f}% → {'STRONG LONG' if ia2_indicators.get('price_vs_ema21', 0) < -3 else 'LONG' if ia2_indicators.get('price_vs_ema21', 0) < -1 else 'SHORT' if ia2_indicators.get('price_vs_ema21', 0) > 1 else 'STRONG SHORT' if ia2_indicators.get('price_vs_ema21', 0) > 3 else 'NEUTRAL'}
 
-KEY LEVELS FOR IA2 CALCULATIONS:
-- Current Price: ${current_price:.4f}
-- VWAP Level: ${analysis.vwap_price:.4f}
-- IA1 Support: ${analysis.stop_loss_price:.4f} (IA1's calculation)
-- IA1 Resistance: ${analysis.take_profit_price:.4f} (IA1's calculation)
+💰 DEX INSTITUTIONAL METRICS (Dune Analytics):
+- **24h DEX Volume**: ${dex_metrics.get('total_volume_24h', 0):,.0f}
+- **Avg Trade Size**: ${dex_metrics.get('avg_trade_size', 0):,.0f}  
+- **Large Trades (>$10k)**: {dex_metrics.get('large_trades_count', 0)} trades
+- **Institutional Ratio**: {dex_metrics.get('institutional_ratio', 0):.1%} → {'STRONG INSTITUTIONAL' if dex_metrics.get('institutional_ratio', 0) > 0.4 else 'MODERATE INSTITUTIONAL' if dex_metrics.get('institutional_ratio', 0) > 0.2 else 'RETAIL DRIVEN'}
+
+📊 LAYER 2 - IA1 REFERENCE DATA (Confirmation only):
+- IA1 MFI: {analysis.mfi_value:.1f}, IA1 VWAP: {analysis.vwap_position:+.2f}%
+- IA1 RSI: {analysis.rsi:.1f}, IA1 MACD: {analysis.macd_trend.upper()}
+
+KEY PRICE LEVELS:
+- Current: ${current_price:.4f} | IA1 SL: ${analysis.stop_loss_price:.4f} | IA1 TP: ${analysis.take_profit_price:.4f}
 
 TASK: Strategic decision using HIERARCHICAL CONSENSUS MODEL (not simple confluence).
 
