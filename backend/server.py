@@ -2580,7 +2580,7 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
                 reasoning += f"\nTrend Duration: {detected_pattern.trend_duration_days} days"
                 
                 # 🚨 CORRECTION: Prix temporaire pour le reasoning (sera mis à jour après calcul)
-                reasoning += f"\nEntry: ${opportunity.current_price:.6f} → Target: [Calculating...]"
+                reasoning += f"\nEntry: ${real_current_price:.6f} → Target: [Calculating...]"
                 reasoning += f"\n⚠️ This {detected_pattern.pattern_type.value} pattern supports IA1's {final_direction.upper()} strategic decision."
             
             # 🚀 UTILISER LE JSON IA1 COMPLET + enrichir avec calculs techniques
