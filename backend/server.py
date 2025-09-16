@@ -5029,8 +5029,9 @@ TASK: Strategic decision using 6-INDICATOR CONFLUENCE MATRIX with CLEAR EXECUTIO
 - Compare your RR vs IA1's RR - use the better one
 
 EXAMPLES:
-- STRONG LONG: "6/6 confluence: RSI oversold recovery + MACD bullish + MFI accumulation + VWAP precision entry + perfect EMA hierarchy + Golden Cross momentum"
-- HOLD: "3/6 confluence: Only RSI and patterns align, but MFI shows distribution + VWAP overbought + mixed EMA hierarchy. Wait for better setup."
+- EXECUTE LONG: "Score +5/6: RSI(32)=+1, MACD(bullish)=+1, MFI(22)=+1, VWAP(-3.2%)=+1, EMA(strong_bull)=+1, Patterns(3 bullish)=+1. Strong confluence → LONG"
+- EXECUTE SHORT: "Score +4/6: RSI(75)=+1, MACD(bearish)=+1, MFI(80)=+1, VWAP(+4%)=+1, EMA(neutral)=0, Patterns(mixed)=0. Good confluence → SHORT"  
+- HOLD: "Score +1/6: Only RSI supports, MFI(55)=0, VWAP(-0.5%)=0, EMA(neutral)=0, MACD(weak)=0, Patterns(mixed)=0. Weak confluence → HOLD"
 
 Your response MUST be ONLY a valid JSON object:
 {{
