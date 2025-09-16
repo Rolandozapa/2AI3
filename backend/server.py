@@ -5006,11 +5006,11 @@ Your response MUST be ONLY a valid JSON object:
 {{
     "signal": "long" or "short" or "hold",
     "confidence": 0.XX (0.50 to 0.99),
-    "confluence_score": +X,
-    "confluence_breakdown": "RSI=+1, MACD=0, MFI=+1, VWAP=-1, EMA=+1, Patterns=0",
-    "reasoning": "Score +X/6: [explain decision based on confluence rules]. IA2 RR: X.X vs IA1 RR: X.X",
+    "layer1_consensus": "MFI=LONG, VWAP=LONG, EMA_CROSS=BULLISH, EMA_HIERARCHY=LONG_BIAS",
+    "consensus_strength": "STRONG" or "MODERATE" or "WEAK" or "CONFLICTED",
+    "reasoning": "LAYER 1: X/4 institutional indicators support [direction]. [Explain consensus logic]. LAYER 2 confirms/contradicts.",
     "risk_level": "low" or "medium" or "high",
-    "ia2_calculated_rr": X.XX
+    "execution_rationale": "Institutional consensus + trend alignment" or "Hold due to conflicted signals"
 }}
 
 CRITICAL: Respond ONLY with valid JSON, no other text."""
