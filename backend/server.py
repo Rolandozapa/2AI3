@@ -5005,21 +5005,28 @@ TECHNICAL INDICATORS:
 - Stochastic: {analysis.stochastic:.1f}%K ({analysis.stochastic_signal})
 - Patterns: {analysis.patterns_detected}
 
-TASK: Evaluate IA1's technical levels using the 6-INDICATOR CONFLUENCE MATRIX and provide your strategic decision.
+TASK: Strategic decision using 6-INDICATOR CONFLUENCE MATRIX with CLEAR EXECUTION RULES.
 
-CONFLUENCE ANALYSIS:
-1. **RSI + MACD**: Do momentum indicators align with IA1's signal?
-2. **MFI (Institutional)**: Does smart money flow support the direction?
-3. **VWAP (Precision)**: Is entry near optimal VWAP levels for good timing?
-4. **EMA Hierarchy**: Does multi-timeframe trend structure support the signal?
-5. **EMA Cross Signals**: Are Golden/Death crosses confirming momentum?
-6. **Pattern Confluence**: Do chart patterns align with technical indicators?
+🎯 CONFLUENCE SCORING (Count each as +1 if supportive, 0 if neutral, -1 if opposing):
+1. **RSI**: Oversold (<30) = +1 LONG | Overbought (>70) = +1 SHORT | Else = 0
+2. **MACD**: Positive trend = +1 LONG | Negative trend = +1 SHORT | Else = 0  
+3. **MFI**: <30 (accumulation) = +1 LONG | >70 (distribution) = +1 SHORT | Else = 0
+4. **VWAP**: <-2% (oversold) = +1 LONG | >+2% (overbought) = +1 SHORT | Else = 0
+5. **EMA Hierarchy**: Strong/weak bull = +1 LONG | Strong/weak bear = +1 SHORT | Else = 0
+6. **Patterns**: Majority bullish = +1 LONG | Majority bearish = +1 SHORT | Else = 0
 
-LEVEL COMPARISON:
-- Compare IA1 (technical) vs IA2 (strategic confluence) levels
-- Which RR is more realistic given market conditions?
-- Do confluence indicators support IA1's direction?
-Minimum 4/6 confluence required for LONG/SHORT - count supporting indicators.
+📊 EXECUTION RULES (BE DECISIVE):
+- Score +4 to +6: EXECUTE IA1's signal (strong confluence)
+- Score +2 to +3: EXECUTE if IA1 confidence >75% (moderate confluence)  
+- Score 0 to +1: HOLD (weak confluence)
+- Score -1 to -3: HOLD (conflicting signals)
+- Score -4 to -6: REVERSE IA1's signal (strong counter-confluence)
+
+🎯 IA2 STRATEGIC LEVELS: Calculate YOUR own levels using confluence:
+- Entry: Current price
+- SL: Use strongest confluence level (EMA21, VWAP, or pattern level)
+- TP: Target 2.5:1 RR minimum with confluence resistance/support
+- Compare your RR vs IA1's RR - use the better one
 
 EXAMPLES:
 - STRONG LONG: "6/6 confluence: RSI oversold recovery + MACD bullish + MFI accumulation + VWAP precision entry + perfect EMA hierarchy + Golden Cross momentum"
