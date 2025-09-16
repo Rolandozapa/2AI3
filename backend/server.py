@@ -3046,30 +3046,30 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
                 original_stop_loss = stop_loss_price  # Fallback calculated levels
                 original_take_profit = take_profit_price  # Fallback calculated levels
             
-            # 🔧 CALCUL RR BASÉ SUR LES PRIX ORIGINAUX IA1 - FORMULES IA2 EXACTES
-            # Utiliser les valeurs ORIGINALES avant écrasement par fallbacks
-            if ia1_signal.lower() == "long":
-                # LONG: Formule IA2 exacte avec prix originaux
-                risk = original_entry_price - original_stop_loss  # Entry - Stop Loss
-                reward = original_take_profit - original_entry_price  # Take Profit - Entry
-                ia1_risk_reward_ratio = reward / risk if risk > 0 else 1.0
-                logger.info(f"🔢 LONG RR CALCULATION (ORIGINAL LEVELS) {opportunity.symbol}: Entry({original_entry_price:.6f}) - SL({original_stop_loss:.6f}) = Risk({risk:.6f}), TP({original_take_profit:.6f}) - Entry = Reward({reward:.6f}), RR = {ia1_risk_reward_ratio:.2f}")
+            # 🎯 EXTRACT IA1 CALCULATED RR (from IA1's own analysis, not backend calculation)
+            if 'risk_reward_analysis' in ia1_complete_json:
+                rr_analysis = ia1_complete_json['risk_reward_analysis']
                 
-            elif ia1_signal.lower() == "short":
-                # SHORT: Formule IA2 exacte avec prix originaux
-                risk = original_stop_loss - original_entry_price  # Stop Loss - Entry
-                reward = original_entry_price - original_take_profit  # Entry - Take Profit
-                ia1_risk_reward_ratio = reward / risk if risk > 0 else 1.0
-                logger.info(f"🔢 SHORT RR CALCULATION (ORIGINAL LEVELS) {opportunity.symbol}: SL({original_stop_loss:.6f}) - Entry({original_entry_price:.6f}) = Risk({risk:.6f}), Entry - TP({original_take_profit:.6f}) = Reward({reward:.6f}), RR = {ia1_risk_reward_ratio:.2f}")
-                
-            else:  # hold
-                # HOLD: RR basé sur les niveaux neutres calculés (formule LONG par défaut)
-                risk = entry_price - stop_loss_price  # Entry - Stop Loss
-                reward = take_profit_price - entry_price  # Take Profit - Entry  
-                ia1_risk_reward_ratio = reward / risk if risk > 0 else 1.0
-                logger.info(f"🔢 HOLD RR CALCULATION (IA2 formula) {opportunity.symbol}: Entry({entry_price:.6f}) - SL({stop_loss_price:.6f}) = Risk({risk:.6f}), TP({take_profit_price:.6f}) - Entry = Reward({reward:.6f}), RR = {ia1_risk_reward_ratio:.2f}")
+                if ia1_signal.lower() == "long":
+                    ia1_risk_reward_ratio = float(rr_analysis.get('calculated_rr_bullish', 1.0))
+                    logger.info(f"🎯 IA1 CALCULATED RR for LONG {opportunity.symbol}: {ia1_risk_reward_ratio:.2f} (from IA1 analysis)")
+                    
+                elif ia1_signal.lower() == "short":
+                    ia1_risk_reward_ratio = float(rr_analysis.get('calculated_rr_bearish', 1.0))
+                    logger.info(f"🎯 IA1 CALCULATED RR for SHORT {opportunity.symbol}: {ia1_risk_reward_ratio:.2f} (from IA1 analysis)")
+                    
+                else:  # hold
+                    ia1_risk_reward_ratio = max(
+                        float(rr_analysis.get('calculated_rr_bullish', 1.0)),
+                        float(rr_analysis.get('calculated_rr_bearish', 1.0))
+                    )
+                    logger.info(f"🎯 IA1 CALCULATED RR for HOLD {opportunity.symbol}: {ia1_risk_reward_ratio:.2f} (best of both)")
+            else:
+                # Fallback si pas de risk_reward_analysis
+                ia1_risk_reward_ratio = 1.0
+                logger.warning(f"⚠️ No IA1 RR calculation found for {opportunity.symbol}, using fallback 1.0")
             
-            # Cap RR pour éviter valeurs aberrantes mais permettre RR élevés réalistes
+            # Cap RR pour éviter valeurs aberrantes
             ia1_risk_reward_ratio = min(max(ia1_risk_reward_ratio, 0.1), 20.0)
 
             # 🚨 MISE À JOUR REASONING avec les vrais prix calculés
