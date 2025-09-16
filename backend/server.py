@@ -4925,19 +4925,23 @@ class UltraProfessionalIA2DecisionAgent:
             # Simplified prompt for Claude - NO COMPLEX F-STRINGS
             simple_prompt = f"""You are IA2, an expert crypto trading strategist. 
 
-ANALYSIS DATA:
+IA1 ANALYSIS:
 - Symbol: {symbol}
 - Current Price: ${current_price:.4f}
-- IA1 Signal: {ia1_signal}
+- IA1 Signal: {ia1_signal.upper()}
 - IA1 Confidence: {ia1_confidence:.1%}
-- IA1 RR: {ia1_rr:.2f}
+- IA1 RR: {ia1_rr:.2f}:1
 
-PROPOSED TRADE:
-- Signal: {signal}
+IA1 TECHNICAL LEVELS:
 - Entry: ${entry_price:.4f}
-- Stop Loss: ${stop_loss:.4f}
-- Take Profit 1: ${tp1:.4f}
-- Risk-Reward: {rr_ratio:.2f}:1
+- Stop Loss: ${stop_loss:.4f} 
+- Take Profit: ${tp1:.4f}
+- Calculated RR: {rr_ratio:.2f}:1
+
+TECHNICAL INDICATORS:
+- RSI: {analysis.rsi:.1f}
+- MACD: {analysis.macd_signal:.6f}
+- Patterns: {analysis.patterns_detected}
 
 TASK: Analyze this trade and provide your strategic decision.
 
