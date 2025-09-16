@@ -4981,12 +4981,14 @@ TASK: Strategic decision using 6-INDICATOR CONFLUENCE MATRIX with CLEAR EXECUTIO
 5. **EMA Hierarchy**: Strong/weak bull = +1 LONG | Strong/weak bear = +1 SHORT | Else = 0
 6. **Patterns**: Majority bullish = +1 LONG | Majority bearish = +1 SHORT | Else = 0
 
-📊 EXECUTION RULES (BE DECISIVE):
-- Score +4 to +6: EXECUTE IA1's signal (strong confluence)
-- Score +2 to +3: EXECUTE if IA1 confidence >75% (moderate confluence)  
-- Score 0 to +1: HOLD (weak confluence)
-- Score -1 to -3: HOLD (conflicting signals)
-- Score -4 to -6: REVERSE IA1's signal (strong counter-confluence)
+📊 EXECUTION RULES (BE PRAGMATIC, NOT PERFECTIONIST):
+- Score +3 to +6: EXECUTE IA1's signal (good confluence is enough)
+- Score +2: EXECUTE if IA1 confidence >70% AND IA1 RR >2.0 (moderate confluence + good setup)
+- Score +1: EXECUTE if IA1 confidence >80% AND IA1 RR >2.5 (weak confluence but strong setup)
+- Score 0: HOLD (neutral confluence)
+- Score -1 to -6: HOLD or REVERSE if strong counter-evidence
+
+🚨 REMEMBER: Perfect confluence is rare. Good confluence + strong IA1 setup = EXECUTE!
 
 🎯 IA2 STRATEGIC LEVELS: Calculate YOUR own levels using confluence:
 - Entry: Current price
