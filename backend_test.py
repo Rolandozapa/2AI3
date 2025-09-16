@@ -800,166 +800,169 @@ class IA2DecisionPersistenceTestSuite:
         except Exception as e:
             self.log_test_result("Error Handling Verification", False, f"Exception: {str(e)}")
     
-    async def test_5_backend_logs_verification(self):
-        """Test 5: Backend Logs Verification - Check for Pattern Detection and MACD Integration Health"""
-        logger.info("\n🔍 TEST 5: Backend Logs Verification")
+    async def test_5_main_orchestration_comparison(self):
+        """Test 5: Main Orchestration Comparison - Verify Both Endpoints Use Identical Logic"""
+        logger.info("\n🔍 TEST 5: Main Orchestration Comparison")
         
         try:
-            logs_results = {
-                'backend_logs_accessible': False,
-                'pattern_detection_mentions': False,
-                'macd_calculation_mentions': False,
-                'yahoo_finance_mentions': False,
-                'no_critical_errors': False,
-                'error_count': 0,
-                'success_messages': []
+            comparison_results = {
+                'force_analysis_logic_found': False,
+                'main_orchestration_logic_found': False,
+                'identical_save_logic': False,
+                'same_collection_used': False,
+                'logging_patterns_match': False,
+                'code_analysis_successful': False
             }
             
-            logger.info("   🚀 Testing backend logs for pattern detection and MACD integration health...")
-            logger.info("   📊 Expected: Pattern detection enabled, MACD calculations working, no critical errors")
+            logger.info("   🚀 Comparing force-ia1-analysis and main orchestration IA2 persistence logic...")
+            logger.info("   📊 Expected: Both use identical database save logic and same collection")
             
-            # Step 1: Check backend logs
-            logger.info("   📋 Checking backend logs for integration health...")
+            # Step 1: Analyze the server.py code for both implementations
+            logger.info("   📋 Analyzing server.py code for IA2 persistence implementations...")
+            
+            try:
+                with open('/app/backend/server.py', 'r') as f:
+                    server_code = f.read()
+                
+                comparison_results['code_analysis_successful'] = True
+                logger.info(f"      ✅ Server code loaded: {len(server_code)} characters")
+                
+                # Look for force-ia1-analysis IA2 save logic
+                force_analysis_patterns = [
+                    'force-ia1-analysis',
+                    'decision_dict = decision.dict()',
+                    'decision_dict[\'timestamp\'] = get_paris_time()',
+                    'db.trading_decisions.insert_one(decision_dict)',
+                    'IA2 DECISION SAVED'
+                ]
+                
+                force_matches = 0
+                for pattern in force_analysis_patterns:
+                    if pattern in server_code:
+                        force_matches += 1
+                
+                if force_matches >= 4:  # At least 4/5 patterns found
+                    comparison_results['force_analysis_logic_found'] = True
+                    logger.info(f"      ✅ Force analysis IA2 save logic found: {force_matches}/{len(force_analysis_patterns)} patterns")
+                else:
+                    logger.warning(f"      ❌ Force analysis IA2 save logic incomplete: {force_matches}/{len(force_analysis_patterns)} patterns")
+                
+                # Look for main orchestration IA2 save logic
+                main_orchestration_patterns = [
+                    'run_trading_cycle',
+                    'decision_dict = decision.dict()',
+                    'decision_dict[\'timestamp\'] = get_paris_time()',
+                    'db.trading_decisions.insert_one(decision_dict)',
+                    'IA2 DECISION SAVED'
+                ]
+                
+                main_matches = 0
+                for pattern in main_orchestration_patterns:
+                    if pattern in server_code:
+                        main_matches += 1
+                
+                if main_matches >= 4:  # At least 4/5 patterns found
+                    comparison_results['main_orchestration_logic_found'] = True
+                    logger.info(f"      ✅ Main orchestration IA2 save logic found: {main_matches}/{len(main_orchestration_patterns)} patterns")
+                else:
+                    logger.warning(f"      ❌ Main orchestration IA2 save logic incomplete: {main_matches}/{len(main_orchestration_patterns)} patterns")
+                
+                # Check if both use identical save patterns
+                identical_patterns = [
+                    'decision_dict = decision.dict()',
+                    'decision_dict[\'timestamp\'] = get_paris_time()',
+                    'db.trading_decisions.insert_one(decision_dict)',
+                    'IA2 DECISION SAVED'
+                ]
+                
+                identical_count = 0
+                for pattern in identical_patterns:
+                    occurrences = server_code.count(pattern)
+                    if occurrences >= 2:  # Should appear in both places
+                        identical_count += 1
+                        logger.info(f"      ✅ Pattern '{pattern}' found {occurrences} times")
+                    else:
+                        logger.warning(f"      ❌ Pattern '{pattern}' found only {occurrences} times")
+                
+                if identical_count >= 3:  # At least 3/4 identical patterns
+                    comparison_results['identical_save_logic'] = True
+                    logger.info(f"      ✅ Identical save logic confirmed: {identical_count}/{len(identical_patterns)} patterns match")
+                else:
+                    logger.warning(f"      ❌ Save logic differs: {identical_count}/{len(identical_patterns)} patterns match")
+                
+                # Check if both use same collection
+                trading_decisions_count = server_code.count('db.trading_decisions')
+                if trading_decisions_count >= 2:
+                    comparison_results['same_collection_used'] = True
+                    logger.info(f"      ✅ Same collection used: 'trading_decisions' appears {trading_decisions_count} times")
+                else:
+                    logger.warning(f"      ❌ Collection usage unclear: 'trading_decisions' appears {trading_decisions_count} times")
+                
+                # Check logging patterns
+                ia2_saved_count = server_code.count('IA2 DECISION SAVED')
+                if ia2_saved_count >= 2:
+                    comparison_results['logging_patterns_match'] = True
+                    logger.info(f"      ✅ Logging patterns match: 'IA2 DECISION SAVED' appears {ia2_saved_count} times")
+                else:
+                    logger.warning(f"      ❌ Logging patterns differ: 'IA2 DECISION SAVED' appears {ia2_saved_count} times")
+                
+            except Exception as e:
+                logger.error(f"      ❌ Code analysis error: {e}")
+            
+            # Step 2: Check backend logs for evidence of both implementations working
+            logger.info("   📋 Checking backend logs for evidence of both implementations...")
+            
             try:
                 backend_logs = await self._capture_backend_logs()
-                
                 if backend_logs:
-                    logs_results['backend_logs_accessible'] = True
-                    logger.info(f"      📊 Captured {len(backend_logs)} log lines for analysis")
-                    
-                    # Check for pattern detection mentions
-                    pattern_detection_patterns = [
-                        'pattern detection enabled',
-                        'pattern detection',
-                        'technical_pattern_detector',
-                        'yahoo finance ohlcv',
-                        'patterns detected'
-                    ]
-                    
-                    pattern_messages = []
-                    for log_line in backend_logs:
-                        for pattern in pattern_detection_patterns:
-                            if pattern.lower() in log_line.lower():
-                                pattern_messages.append(log_line.strip())
-                                break
-                    
-                    if pattern_messages:
-                        logs_results['pattern_detection_mentions'] = True
-                        logger.info(f"      ✅ Pattern detection mentions found: {len(pattern_messages)}")
-                        for msg in pattern_messages[:2]:
-                            logger.info(f"         - {msg}")
-                    else:
-                        logger.warning(f"      ❌ No pattern detection mentions found in logs")
-                    
-                    # Check for MACD calculation mentions
-                    macd_patterns = [
-                        'macd',
-                        'macd calculation',
-                        'macd_calculator',
-                        'macd optimized',
-                        'macd signal'
-                    ]
-                    
-                    macd_messages = []
-                    for log_line in backend_logs:
-                        for pattern in macd_patterns:
-                            if pattern.lower() in log_line.lower() and 'error' not in log_line.lower():
-                                macd_messages.append(log_line.strip())
-                                break
-                    
-                    if macd_messages:
-                        logs_results['macd_calculation_mentions'] = True
-                        logger.info(f"      ✅ MACD calculation mentions found: {len(macd_messages)}")
-                        for msg in macd_messages[:2]:
-                            logger.info(f"         - {msg}")
-                    else:
-                        logger.warning(f"      ❌ No MACD calculation mentions found in logs")
-                    
-                    # Check for Yahoo Finance mentions
-                    yahoo_patterns = [
-                        'yahoo finance',
-                        'yfinance',
-                        'yahoo ohlcv',
-                        'yahoo_finance'
-                    ]
-                    
-                    yahoo_messages = []
-                    for log_line in backend_logs:
-                        for pattern in yahoo_patterns:
-                            if pattern.lower() in log_line.lower():
-                                yahoo_messages.append(log_line.strip())
-                                break
-                    
-                    if yahoo_messages:
-                        logs_results['yahoo_finance_mentions'] = True
-                        logger.info(f"      ✅ Yahoo Finance mentions found: {len(yahoo_messages)}")
-                    else:
-                        logger.warning(f"      ❌ No Yahoo Finance mentions found in logs")
-                    
-                    # Check for critical errors
-                    error_patterns = ['ERROR', 'CRITICAL', 'Exception', 'Traceback', 'Failed']
-                    error_count = 0
-                    critical_errors = []
+                    # Look for force analysis IA2 saves
+                    force_saves = []
+                    main_saves = []
                     
                     for log_line in backend_logs:
-                        for pattern in error_patterns:
-                            if pattern in log_line:
-                                error_count += 1
-                                if len(critical_errors) < 3:  # Store first 3 errors
-                                    critical_errors.append(log_line.strip())
-                                break
+                        if 'IA2 DECISION SAVED' in log_line:
+                            # Try to determine if it's from force analysis or main orchestration
+                            if any(keyword in log_line.lower() for keyword in ['force', 'forced']):
+                                force_saves.append(log_line.strip())
+                            else:
+                                main_saves.append(log_line.strip())
                     
-                    logs_results['error_count'] = error_count
-                    if error_count < len(backend_logs) * 0.1:  # Less than 10% error rate
-                        logs_results['no_critical_errors'] = True
-                        logger.info(f"      ✅ Backend logs healthy: {error_count} errors in {len(backend_logs)} lines")
-                    else:
-                        logger.warning(f"      ⚠️ Backend logs show issues: {error_count} errors in {len(backend_logs)} lines")
-                        for error in critical_errors:
-                            logger.warning(f"         - {error}")
+                    logger.info(f"      📋 Found IA2 saves - Force: {len(force_saves)}, Main: {len(main_saves)}")
                     
-                    # Collect success messages
-                    success_patterns = [
-                        'successfully',
-                        'completed',
-                        'working',
-                        'enabled',
-                        'operational'
-                    ]
+                    if force_saves:
+                        logger.info(f"      ✅ Force analysis IA2 saves detected")
+                        for save in force_saves[:1]:
+                            logger.info(f"         - {save}")
                     
-                    for log_line in backend_logs:
-                        for pattern in success_patterns:
-                            if (pattern.lower() in log_line.lower() and 
-                                'error' not in log_line.lower() and
-                                ('pattern' in log_line.lower() or 'macd' in log_line.lower())):
-                                logs_results['success_messages'].append(log_line.strip())
-                                break
-                    
+                    if main_saves:
+                        logger.info(f"      ✅ Main orchestration IA2 saves detected")
+                        for save in main_saves[:1]:
+                            logger.info(f"         - {save}")
                 else:
-                    logger.warning(f"      ⚠️ No backend logs captured")
+                    logger.warning(f"      ⚠️ Could not capture backend logs")
                     
             except Exception as e:
-                logger.error(f"      ❌ Error analyzing backend logs: {e}")
+                logger.warning(f"      ⚠️ Log analysis error: {e}")
             
             # Calculate test success
             success_criteria = [
-                logs_results['backend_logs_accessible'],
-                logs_results['pattern_detection_mentions'] or logs_results['yahoo_finance_mentions'],
-                logs_results['macd_calculation_mentions'],
-                logs_results['no_critical_errors']
+                comparison_results['code_analysis_successful'],
+                comparison_results['force_analysis_logic_found'],
+                comparison_results['main_orchestration_logic_found'],
+                comparison_results['identical_save_logic'] and comparison_results['same_collection_used']
             ]
             success_count = sum(success_criteria)
             success_rate = success_count / len(success_criteria)
             
             if success_rate >= 0.75:  # 75% success threshold
-                self.log_test_result("Backend Logs Verification", True, 
-                                   f"Backend logs healthy: {success_count}/{len(success_criteria)} criteria met. Errors: {logs_results['error_count']}, Pattern detection: {logs_results['pattern_detection_mentions']}, MACD: {logs_results['macd_calculation_mentions']}")
+                self.log_test_result("Main Orchestration Comparison", True, 
+                                   f"Orchestration comparison successful: {success_count}/{len(success_criteria)} criteria met. Identical logic: {comparison_results['identical_save_logic']}, Same collection: {comparison_results['same_collection_used']}")
             else:
-                self.log_test_result("Backend Logs Verification", False, 
-                                   f"Backend logs issues: {success_count}/{len(success_criteria)} criteria met. Error count: {logs_results['error_count']}")
+                self.log_test_result("Main Orchestration Comparison", False, 
+                                   f"Orchestration comparison issues: {success_count}/{len(success_criteria)} criteria met")
                 
         except Exception as e:
-            self.log_test_result("Backend Logs Verification", False, f"Exception: {str(e)}")
+            self.log_test_result("Main Orchestration Comparison", False, f"Exception: {str(e)}")
     
     async def _capture_backend_logs(self):
         """Capture recent backend logs"""
