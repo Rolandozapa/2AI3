@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test IA1 to IA2 Escalation System - COMPREHENSIVE VALIDATION"
+user_problem_statement: "Fix IA2 Decision Persistence: Complete database saving fix for IA2 decisions in server.py (including main orchestration and force-ia1-analysis endpoint) to ensure IA2 strategic decisions are properly stored in MongoDB"
 
 backend:
   - task: "IA1 to IA2 Escalation System - 3 Voies Implementation"
