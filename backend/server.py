@@ -4961,11 +4961,15 @@ CONFLUENCE ANALYSIS:
 Consider: Are the entry/SL/TP levels realistic? Does the RR make sense? Do ALL indicators support the signal?
 Minimum 4/6 confluence required for execution - count how many indicators support IA1's direction.
 
+EXAMPLES:
+- STRONG LONG: "6/6 confluence: RSI oversold recovery + MACD bullish + MFI accumulation + VWAP precision entry + perfect EMA hierarchy + Golden Cross momentum"
+- HOLD: "3/6 confluence: Only RSI and patterns align, but MFI shows distribution + VWAP overbought + mixed EMA hierarchy. Wait for better setup."
+
 Your response MUST be ONLY a valid JSON object:
 {{
     "signal": "long" or "short" or "hold",
     "confidence": 0.XX (0.50 to 0.99),
-    "reasoning": "Your analysis of IA1's levels and indicators",
+    "reasoning": "Count X/6 confluence: [list which indicators support/oppose]. Your analysis of IA1's levels and indicators",
     "risk_level": "low" or "medium" or "high"
 }}
 
