@@ -193,8 +193,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Anti-Duplicate System MongoDB Integration"
-    - "IA1 to IA2 Escalation System - 3 Voies Implementation"
+    - "IA2 Decision Persistence Database Fix"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
