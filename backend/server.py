@@ -4957,15 +4957,19 @@ IA2 STRATEGIC LEVELS (Confluence-based):
 - Take Profit: ${tp1:.4f}
 - IA2 RR: {rr_ratio:.2f}:1
 
-TECHNICAL INDICATORS:
-- RSI: {analysis.rsi:.1f} ({analysis.rsi_signal})
-- MACD: {analysis.macd_signal:.6f} ({analysis.macd_trend})
-- MFI: {analysis.mfi_value:.1f} ({analysis.mfi_signal}) - Institution: {analysis.mfi_institution}
-- VWAP: ${analysis.vwap_price:.4f} | Position: {analysis.vwap_position:+.2f}% ({analysis.vwap_signal})
-- EMA Hierarchy: {analysis.ema_hierarchy} | Position: {analysis.ema_position} | Strength: {analysis.ema_strength:.0%}
-- EMA Cross: {analysis.ema_cross_signal}
-- Stochastic: {analysis.stochastic:.1f}%K ({analysis.stochastic_signal})
-- Patterns: {analysis.patterns_detected}
+CONFLUENCE DATA FOR SCORING:
+- RSI: {analysis.rsi:.1f} ({'OVERSOLD' if analysis.rsi < 30 else 'OVERBOUGHT' if analysis.rsi > 70 else 'NEUTRAL'})
+- MACD: {analysis.macd_signal:.6f} ({analysis.macd_trend.upper()})
+- MFI: {analysis.mfi_value:.1f} ({'ACCUMULATION' if analysis.mfi_value < 30 else 'DISTRIBUTION' if analysis.mfi_value > 70 else 'NEUTRAL'})
+- VWAP: Position {analysis.vwap_position:+.2f}% ({'OVERSOLD' if analysis.vwap_position < -2 else 'OVERBOUGHT' if analysis.vwap_position > 2 else 'NEUTRAL'})
+- EMA Hierarchy: {analysis.ema_hierarchy.upper()} ({'BULLISH' if 'bull' in analysis.ema_hierarchy else 'BEARISH' if 'bear' in analysis.ema_hierarchy else 'NEUTRAL'})
+- Patterns: {analysis.patterns_detected} ({'BULLISH_MAJORITY' if len([p for p in analysis.patterns_detected if any(bull in p.lower() for bull in ['bullish', 'double_bottom', 'cup', 'ascending'])]) > len(analysis.patterns_detected)//2 else 'BEARISH_MAJORITY' if len([p for p in analysis.patterns_detected if any(bear in p.lower() for bear in ['bearish', 'double_top', 'head', 'descending'])]) > len(analysis.patterns_detected)//2 else 'MIXED'})
+
+KEY LEVELS FOR IA2 CALCULATIONS:
+- Current Price: ${current_price:.4f}
+- VWAP Level: ${analysis.vwap_price:.4f}
+- IA1 Support: ${analysis.stop_loss_price:.4f} (IA1's calculation)
+- IA1 Resistance: ${analysis.take_profit_price:.4f} (IA1's calculation)
 
 TASK: Strategic decision using 6-INDICATOR CONFLUENCE MATRIX with CLEAR EXECUTION RULES.
 
