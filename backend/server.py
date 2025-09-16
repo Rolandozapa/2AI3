@@ -2971,11 +2971,11 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
                 # Le RR doit être déterminé par les niveaux techniques uniquement
                 
                 if ia1_signal.lower() == "long":
-                    # LONG: Niveaux techniques standards indépendants de la confidence
-                    stop_loss_price = real_current_price * 0.95  # -5% stop loss (support technique)
-                    take_profit_price = real_current_price * 1.08  # +8% take profit (résistance technique)
+                    # LONG: Niveaux techniques pour RR > 2.0 (TARGET RR = 2.4:1)
+                    stop_loss_price = real_current_price * 0.94  # -6% stop loss (support technique)
+                    take_profit_price = real_current_price * 1.144  # +14.4% take profit (résistance technique) → RR = 2.4:1
                     
-                    logger.info(f"🔧 LONG FALLBACK TECHNIQUE {opportunity.symbol}: SL -5% (support), TP +8% (résistance)")
+                    logger.info(f"🔧 LONG FALLBACK TECHNIQUE {opportunity.symbol}: SL -6% (support), TP +14.4% (résistance) → RR ~2.4:1")
                     
                 elif ia1_signal.lower() == "short":
                     # SHORT: Niveaux techniques standards indépendants de la confidence
