@@ -5179,9 +5179,9 @@ RSI, MACD, Patterns → Use for CONFIRMATION only, don't let them block LAYER 1 
 🚨 KEY PRINCIPLE: SEEK CONSENSUS, NOT PERFECTION. If institutional indicators (MFI+VWAP) agree with trend context (EMA), EXECUTE!
 
 EXAMPLES:
-- EXECUTE LONG: "LAYER 1: MFI(22)=LONG + VWAP(-4%)=STRONG_LONG + EMA_CROSS=BULLISH + EMA_HIERARCHY=LONG_BIAS = 4/4 consensus → STRONG institutional agreement → LONG"
-- EXECUTE SHORT: "LAYER 1: MFI(78)=STRONG_SHORT + VWAP(+3.5%)=STRONG_SHORT + EMA_HIERARCHY=SHORT_BIAS = 3/4 consensus → MODERATE institutional agreement → SHORT"
-- HOLD: "LAYER 1: MFI(45)=NEUTRAL + VWAP(+0.8%)=NEUTRAL + EMA mixed signals = CONFLICTED → No clear institutional direction → HOLD"
+- EXECUTE LONG: "IA2 CONSENSUS: Technical (EMA GOLDEN cross + SMA BULLISH) + Institutional (40% large trader ratio) + Timing (price -2.1% below EMA21) = STRONG signals → LONG"
+- EXECUTE SHORT: "IA2 CONSENSUS: Technical (EMA DEATH cross + SMA BEARISH) + Institutional (35% institutional ratio) + Timing (price +3.4% above EMA21) = STRONG signals → SHORT"
+- HOLD: "IA2 CONSENSUS: Technical (mixed EMA signals) + Institutional (low 15% ratio) + Timing (price near EMA21) = WEAK signals → HOLD"
 
 Your response MUST be ONLY a valid JSON object:
 {{
