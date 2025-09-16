@@ -4883,29 +4883,31 @@ class UltraProfessionalIA2DecisionAgent:
             ia1_confidence = analysis.analysis_confidence
             ia1_rr = analysis.risk_reward_ratio
             
-            # Basic calculations for IA2
-            entry_price = current_price
+            # 🎯 UTILISER LES VRAIS NIVEAUX TECHNIQUES D'IA1 (pas des pourcentages fixes)
+            entry_price = analysis.entry_price
+            stop_loss = analysis.stop_loss_price
+            tp1 = analysis.take_profit_price
             
-            # Calculate stop loss and take profits based on IA1 signal
+            # 🔧 CALCUL DYNAMIC DES TP2/TP3 basé sur TP1 IA1
             if ia1_signal.lower() == "long":
-                stop_loss = current_price * 0.97  # 3% stop loss
-                tp1 = current_price * 1.02  # 2% TP1
-                tp2 = current_price * 1.04  # 4% TP2  
-                tp3 = current_price * 1.06  # 6% TP3
+                # LONG: Étendre les TPs au-delà du TP1 IA1
+                tp_range = tp1 - entry_price
+                tp2 = tp1 + (tp_range * 0.5)  # 50% extension
+                tp3 = tp1 + (tp_range * 1.0)  # 100% extension
                 signal = "long"
             elif ia1_signal.lower() == "short":
-                stop_loss = current_price * 1.03  # 3% stop loss
-                tp1 = current_price * 0.98  # 2% TP1
-                tp2 = current_price * 0.96  # 4% TP2
-                tp3 = current_price * 0.94  # 6% TP3
+                # SHORT: Étendre les TPs au-delà du TP1 IA1
+                tp_range = entry_price - tp1
+                tp2 = tp1 - (tp_range * 0.5)  # 50% extension
+                tp3 = tp1 - (tp_range * 1.0)  # 100% extension  
                 signal = "short"
             else:
-                # HOLD case
-                stop_loss = current_price * 0.98
-                tp1 = current_price * 1.01
-                tp2 = current_price * 1.02
-                tp3 = current_price * 1.03
+                # HOLD: Utiliser les niveaux IA1 tels quels
+                tp2 = tp1 * 1.01  # Petit ajustement
+                tp3 = tp1 * 1.02  # Petit ajustement
                 signal = "hold"
+                
+            logger.info(f"🎯 IA2 USING IA1 LEVELS {symbol}: Entry=${entry_price:.6f}, SL=${stop_loss:.6f}, TP1=${tp1:.6f} (IA1 levels)")
             
             # Calculate Risk-Reward ratio
             if signal.lower() == "long":
