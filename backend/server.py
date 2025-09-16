@@ -2356,10 +2356,11 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
             5. For LONG signals: Support should be logical stop-loss, Resistance should be realistic target
             6. For SHORT signals: Resistance should be logical stop-loss, Support should be realistic target  
             7. Levels should be achievable within 1-3 days based on current volatility
-            8. The backend will calculate Risk-Reward using your technical levels
-            9. Recommend LONG/SHORT based on the strongest pattern direction and confluence
-            10. Your recommendation should reflect the overall pattern analysis, not just RR calculation
-            11. Calculate RR to inform risk assessment, but don't let RR < 2.0 force a HOLD recommendation
+            8. **CRITICAL**: YOU must calculate Risk-Reward ratios yourself in the JSON response
+            9. For LONG: calculated_rr_bullish = (resistance - entry) / (entry - support) 
+            10. For SHORT: calculated_rr_bearish = (entry - support) / (resistance - entry)
+            11. Target RR > 2.0 for strong signals, but recommend based on pattern confluence
+            12. Your recommendation should reflect overall pattern analysis + RR consideration
             
             Required JSON format:
             {{
