@@ -4889,76 +4889,38 @@ class UltraProfessionalIA2DecisionAgent:
             ia1_confidence = analysis.analysis_confidence
             ia1_rr = analysis.risk_reward_ratio
             
-            # 🎯 IA2 STRATEGIC LEVEL CALCULATION - Using 6-Indicator Confluence
-            entry_price = current_price  # IA2 uses current market price
+            # 🎯 IA2 STRATEGIC LEVEL CALCULATION - Let IA2 decide with confluence data
+            entry_price = current_price  # IA2 uses current market price as entry
             
-            # Get technical levels from analysis for confluence-based adjustments
+            # Provide confluence data to IA2 for her own calculations
             vwap_price = analysis.vwap_price
             vwap_position = analysis.vwap_position
             ema_hierarchy = analysis.ema_hierarchy
             mfi_value = analysis.mfi_value
             rsi = analysis.rsi
             
-            # 🔧 IA2 ADVANCED LEVEL CALCULATION with Confluence
+            # IA2 will calculate her own levels in the prompt, we just set defaults
+            # These will be overridden by IA2's analysis
             if ia1_signal.lower() == "long":
-                # LONG: IA2 Strategic Levels using Confluence
                 signal = "long"
-                
-                # Stop Loss: Use strongest support level from confluence
-                if ema_hierarchy in ['strong_bull', 'weak_bull'] and hasattr(analysis, 'ema_21_calculated'):
-                    stop_loss = getattr(analysis, 'ema_21_calculated', analysis.stop_loss_price)  # EMA21 support
-                elif abs(vwap_position) > 2:  # VWAP significant level
-                    stop_loss = vwap_price * 0.98  # VWAP-based support
-                else:
-                    stop_loss = analysis.stop_loss_price  # Fallback to IA1
-                
-                # Take Profit: Use strongest resistance with confluence
-                if mfi_value < 30:  # Institutional accumulation - higher targets
-                    tp1 = entry_price * 1.08  # 8% aggressive target
-                elif rsi < 40:  # Oversold conditions - good upside
-                    tp1 = entry_price * 1.06  # 6% moderate target  
-                else:
-                    tp1 = analysis.take_profit_price  # Use IA1 target
-                    
-                # Extensions
-                tp_range = tp1 - entry_price
-                tp2 = tp1 + (tp_range * 0.6)  # 60% extension
-                tp3 = tp1 + (tp_range * 1.2)  # 120% extension
-                
+                stop_loss = entry_price * 0.96  # Default 4% SL
+                tp1 = entry_price * 1.10  # Default 10% TP for 2.5:1 RR
+                tp2 = entry_price * 1.15
+                tp3 = entry_price * 1.20
             elif ia1_signal.lower() == "short":
-                # SHORT: IA2 Strategic Levels using Confluence
                 signal = "short"
-                
-                # Stop Loss: Use strongest resistance level from confluence
-                if ema_hierarchy in ['strong_bear', 'weak_bear'] and hasattr(analysis, 'ema_21_calculated'):
-                    stop_loss = getattr(analysis, 'ema_21_calculated', analysis.stop_loss_price)  # EMA21 resistance
-                elif abs(vwap_position) > 2:  # VWAP significant level
-                    stop_loss = vwap_price * 1.02  # VWAP-based resistance
-                else:
-                    stop_loss = analysis.stop_loss_price  # Fallback to IA1
-                
-                # Take Profit: Use strongest support with confluence
-                if mfi_value > 70:  # Institutional distribution - lower targets
-                    tp1 = entry_price * 0.92  # 8% aggressive target
-                elif rsi > 60:  # Overbought conditions - good downside
-                    tp1 = entry_price * 0.94  # 6% moderate target
-                else:
-                    tp1 = analysis.take_profit_price  # Use IA1 target
-                    
-                # Extensions
-                tp_range = entry_price - tp1
-                tp2 = tp1 - (tp_range * 0.6)  # 60% extension
-                tp3 = tp1 - (tp_range * 1.2)  # 120% extension
-                
+                stop_loss = entry_price * 1.04  # Default 4% SL
+                tp1 = entry_price * 0.90  # Default 10% TP for 2.5:1 RR
+                tp2 = entry_price * 0.85
+                tp3 = entry_price * 0.80
             else:
-                # HOLD: Neutral levels
                 signal = "hold"
                 stop_loss = entry_price * 0.98
                 tp1 = entry_price * 1.02
                 tp2 = entry_price * 1.03
                 tp3 = entry_price * 1.04
                 
-            logger.info(f"🎯 IA2 CONFLUENCE LEVELS {symbol}: Entry=${entry_price:.6f}, SL=${stop_loss:.6f}, TP1=${tp1:.6f} (IA2 strategic)")
+            logger.info(f"🎯 IA2 PROVIDING CONFLUENCE DATA to IA2 {symbol}: VWAP={vwap_position:+.1f}%, MFI={mfi_value:.1f}, EMA={ema_hierarchy}")
             
             # Calculate Risk-Reward ratio
             if signal.lower() == "long":
