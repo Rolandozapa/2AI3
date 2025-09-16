@@ -1,45 +1,40 @@
 #!/usr/bin/env python3
 """
-PATTERN DETECTION SYSTEM FIXES AND MACD CALCULATION ISSUES TEST SUITE
-Focus: Test pattern detection system fixes and MACD calculation issues in trading bot system
+IA2 DECISION PERSISTENCE DATABASE FIX TEST SUITE
+Focus: Test IA2 decision persistence database fix in trading bot system
 
 CRITICAL TEST REQUIREMENTS FROM REVIEW REQUEST:
-1. **PATTERN DETECTION SYSTEM FIX**: 
-   - Previous issue: Yahoo Finance OHLCV was disabled in technical_pattern_detector.py line 289-291
-   - Previous issue: Pattern detection was disabled in server.py line 2015-2017 (now fixed)
-   - Fix implemented: Re-enabled Yahoo Finance OHLCV in technical_pattern_detector.py (_fetch_yahoo_ohlcv method)
-   - Fix implemented: Re-enabled pattern detection in server.py (removed bypass on line 2017)
-   - Expected result: Pattern detection should show "✅ Pattern detection enabled" instead of "⚠️ Pattern detection temporarily disabled"
-   - Expected result: Patterns array should contain detected pattern names instead of being empty
+1. **IA2 DECISION PERSISTENCE VIA FORCE-IA1-ANALYSIS ENDPOINT**:
+   - Test POST /api/force-ia1-analysis with a symbol that will trigger IA2 escalation
+   - Verify IA2 decision is created AND saved to database
+   - Check MongoDB trading_decisions collection for the new decision
+   - Verify decision contains: symbol, signal, confidence, timestamp
 
-2. **MACD CALCULATION FIX**: 
-   - Previous issue: All IA1 analyses showed MACD values as 0.000000 despite numpy.float64 fix
-   - Fix implemented: Enhanced OHLCV system should properly feed data to IA1 analysis
-   - Expected result: MACD values should show real calculations (e.g., 214.39) instead of 0.000000
-   - Test: Check latest analysis for non-zero MACD values (macd_signal, macd_line, macd_histogram, macd_trend)
+2. **DATABASE PERSISTENCE VERIFICATION**:
+   - Query trading_decisions collection before and after forced analysis
+   - Confirm decision_dict structure includes timestamp with get_paris_time()
+   - Verify logging shows "💾 IA2 DECISION SAVED: {symbol} → {signal} in database"
 
-3. **TECHNICAL INDICATORS INTEGRATION**:
-   - Previous issue: Enhanced OHLCV system not properly feeding data to IA1 analysis
-   - Fix implemented: Enhanced OHLCV system integration with technical indicators
-   - Expected result: Technical indicators should receive real OHLCV data instead of fallback values
-   - Test: Verify RSI, MACD, MFI, VWAP show meaningful signals instead of 'unknown'
+3. **API RESPONSE VS DATABASE CONSISTENCY**:
+   - Ensure API response includes IA2 decision details
+   - Confirm database entry matches API response data
+   - Verify no data loss between decision creation and storage
 
-4. **KEY ENDPOINTS TO TEST**:
-   - GET /api/opportunities (should show opportunities with pattern detection)
-   - POST /api/run-ia1-cycle (should show real MACD values and detected patterns)
-   - GET /api/analyses (should show recent analyses with non-zero MACD values)
+4. **ERROR HANDLING**:
+   - Test database save error handling
+   - Verify proper error logging if save fails
+   - Ensure system continues to return API response even if DB save fails
 
-5. **CRITICAL FIXES IMPLEMENTED**:
-   - Re-enabled Yahoo Finance OHLCV in technical_pattern_detector.py (_fetch_yahoo_ohlcv method)
-   - Re-enabled pattern detection in server.py (removed bypass on line 2017)
-   - Fixed yfinance duplicate entry in requirements.txt
+5. **COMPARE WITH MAIN ORCHESTRATION**:
+   - Verify both force-ia1-analysis and main trading cycle use identical persistence logic
+   - Confirm both save to same trading_decisions collection
 
 SUCCESS CRITERIA:
-✅ Pattern detection should show "✅ Pattern detection enabled" instead of "⚠️ Pattern detection temporarily disabled"
-✅ MACD values should show real calculations (e.g., 214.39) instead of 0.000000
-✅ Patterns array should contain detected pattern names instead of being empty
-✅ Technical indicators should show meaningful values instead of 'unknown'
-✅ Enhanced OHLCV system should properly feed data to IA1 analysis
+✅ IA2 decision created via force-ia1-analysis is saved to database
+✅ Database entry contains all required fields with correct timestamp
+✅ Logging confirms successful database save
+✅ API response and database entry are consistent
+✅ Error handling works if database save fails
 """
 
 import asyncio
