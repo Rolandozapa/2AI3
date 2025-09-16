@@ -4960,7 +4960,7 @@ IA2 STRATEGIC LEVELS (Confluence-based):
 🏛️ LAYER 1 - INSTITUTIONAL & MULTI-TF DIRECTORS:
 - **MFI (Institutional)**: {analysis.mfi_value:.1f} → {'STRONG LONG' if analysis.mfi_value < 25 else 'LONG' if analysis.mfi_value < 40 else 'SHORT' if analysis.mfi_value > 60 else 'STRONG SHORT' if analysis.mfi_value > 75 else 'NEUTRAL'}
 - **VWAP (Position)**: {analysis.vwap_position:+.2f}% → {'STRONG LONG' if analysis.vwap_position < -3 else 'LONG' if analysis.vwap_position < -1 else 'SHORT' if analysis.vwap_position > 1 else 'STRONG SHORT' if analysis.vwap_position > 3 else 'NEUTRAL'}
-- **EMA9/SMA Multi-TF**: EMA9={getattr(analysis, 'ema_9', 'N/A'):.4f} vs SMA50={getattr(analysis, 'sma_50', 'N/A'):.4f} → {'BULLISH MOMENTUM' if hasattr(analysis, 'ema_9') and hasattr(analysis, 'sma_50') and analysis.ema_9 > analysis.sma_50 else 'BEARISH MOMENTUM' if hasattr(analysis, 'ema_9') and hasattr(analysis, 'sma_50') else 'UNKNOWN'}
+- **EMA Cross Signals**: {getattr(analysis, 'ema_cross_signal', 'UNKNOWN')} → {'BULLISH MOMENTUM' if 'golden' in str(getattr(analysis, 'ema_cross_signal', '')).lower() else 'BEARISH MOMENTUM' if 'death' in str(getattr(analysis, 'ema_cross_signal', '')).lower() else 'NEUTRAL MOMENTUM'}
 - **EMA Hierarchy**: {analysis.ema_hierarchy.upper()} → {'LONG BIAS' if 'bull' in analysis.ema_hierarchy else 'SHORT BIAS' if 'bear' in analysis.ema_hierarchy else 'NEUTRAL BIAS'}
 
 📊 LAYER 2 - CONFIRMATION INDICATORS (Support only):
