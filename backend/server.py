@@ -2925,9 +2925,9 @@ Provide final JSON with: signal, confidence, reasoning, entry_price, stop_loss_p
                     # LONG: Stop Loss EN-DESSOUS, Take Profit AU-DESSUS
                     # Niveaux basés sur l'analyse technique PURE, pas sur la confidence
                     
-                    # Utiliser support/resistance calculés ou des niveaux techniques standards
-                    base_support = ia1_calculated_levels.get('primary_support', opportunity.current_price * 0.95)
-                    base_resistance = ia1_calculated_levels.get('primary_resistance', opportunity.current_price * 1.08)
+                    # Utiliser support/resistance calculés ou des niveaux techniques pour RR > 2.0
+                    base_support = ia1_calculated_levels.get('primary_support', opportunity.current_price * 0.94)  # -6% pour meilleur RR
+                    base_resistance = ia1_calculated_levels.get('primary_resistance', opportunity.current_price * 1.144)  # +14.4% pour meilleur RR
                     
                     # LONG: Entry = current, SL = support, TP = resistance
                     stop_loss_price = base_support
