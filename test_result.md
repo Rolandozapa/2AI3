@@ -107,11 +107,11 @@ user_problem_statement: "Fix IA2 Decision Persistence: Complete database saving 
 backend:
   - task: "IA2 Decision Persistence Database Fix"
     implemented: true
-    working: false
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         -working: false
         -agent: "main"
