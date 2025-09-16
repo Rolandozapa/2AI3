@@ -313,7 +313,7 @@ class IA2DecisionPersistenceTestSuite:
             logger.info("   🚀 Testing database persistence structure and logging...")
             logger.info("   📊 Expected: trading_decisions collection with proper structure and timestamps")
             
-            if not self.db:
+            if self.db is None:
                 logger.error("      ❌ No database connection available")
                 self.log_test_result("Database Persistence Verification", False, "No database connection")
                 return
@@ -476,7 +476,7 @@ class IA2DecisionPersistenceTestSuite:
             logger.info("   🚀 Testing API response vs database consistency for IA2 decisions...")
             logger.info("   📊 Expected: API response data matches database entry data")
             
-            if not self.db:
+            if self.db is None:
                 logger.error("      ❌ No database connection available")
                 self.log_test_result("API Response vs Database Consistency", False, "No database connection")
                 return
