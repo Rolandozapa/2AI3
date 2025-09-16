@@ -4988,13 +4988,13 @@ TASK: Strategic decision using HIERARCHICAL CONSENSUS MODEL (not simple confluen
 📊 LAYER 2 - CONFIRMATION INDICATORS (Support Layer, not blockers):
 RSI, MACD, Patterns → Use for CONFIRMATION only, don't let them block LAYER 1 decisions
 
-🎯 IA2 STRATEGIC APPROACH:
-- Don't seek perfection - markets are never 100% clear
-- Minor indicator conflicts are normal - focus on MAJORITY confluence
-- If IA1 has good RR (>2.0) + decent confluence (+2 or higher), EXECUTE
-- Only HOLD if confluence is truly weak (+1 or lower) or strongly negative
+🎯 IA2 DECISION HIERARCHY:
+1. **INSTITUTIONAL CONSENSUS FIRST**: What do MFI + VWAP say about smart money?
+2. **MULTI-TIMEFRAME CONTEXT**: What do EMA9/SMA + EMA hierarchy say about trend?
+3. **EXECUTION BIAS**: Favor execution over waiting - markets reward action with good setups
+4. **LAYER 2 as SUPPORT**: RSI/MACD/Patterns confirm but don't override institutional signals
 
-CALCULATE your own RR if needed, but prioritize confluence scoring over perfect levels.
+🚨 KEY PRINCIPLE: SEEK CONSENSUS, NOT PERFECTION. If institutional indicators (MFI+VWAP) agree with trend context (EMA), EXECUTE!
 
 EXAMPLES:
 - EXECUTE LONG: "Score +5/6: RSI(32)=+1, MACD(bullish)=+1, MFI(22)=+1, VWAP(-3.2%)=+1, EMA(strong_bull)=+1, Patterns(3 bullish)=+1. Strong confluence → LONG"
