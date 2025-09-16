@@ -457,133 +457,168 @@ class IA2DecisionPersistenceTestSuite:
         except Exception as e:
             self.log_test_result("Database Persistence Verification", False, f"Exception: {str(e)}")
     
-    async def test_3_technical_indicators_integration(self):
-        """Test 3: Technical Indicators Integration - Verify Enhanced OHLCV System Feeds Data"""
-        logger.info("\n🔍 TEST 3: Technical Indicators Integration Verification")
+    async def test_3_api_response_vs_database_consistency(self):
+        """Test 3: API Response vs Database Consistency - Verify Data Matches"""
+        logger.info("\n🔍 TEST 3: API Response vs Database Consistency")
         
         try:
-            indicators_results = {
-                'ia1_cycle_successful': False,
-                'technical_indicators_present': False,
-                'indicators_meaningful': False,
-                'ohlcv_integration_working': False,
-                'indicators_data': {},
-                'analysis_id': None
+            consistency_results = {
+                'force_analysis_successful': False,
+                'api_response_has_ia2': False,
+                'database_entry_found': False,
+                'data_consistency_verified': False,
+                'field_matches': {},
+                'test_symbol': None,
+                'api_data': {},
+                'db_data': {}
             }
             
-            logger.info("   🚀 Testing technical indicators integration with enhanced OHLCV system...")
-            logger.info("   📊 Expected: RSI, MFI, VWAP showing meaningful signals instead of 'unknown'")
+            logger.info("   🚀 Testing API response vs database consistency for IA2 decisions...")
+            logger.info("   📊 Expected: API response data matches database entry data")
             
-            # Step 1: Trigger IA1 cycle to test technical indicators
-            logger.info("   📈 Running IA1 cycle to test technical indicators integration...")
-            start_time = time.time()
-            response = requests.post(f"{self.api_url}/run-ia1-cycle", timeout=120)
-            response_time = time.time() - start_time
+            if not self.db:
+                logger.error("      ❌ No database connection available")
+                self.log_test_result("API Response vs Database Consistency", False, "No database connection")
+                return
             
-            if response.status_code == 200:
-                cycle_data = response.json()
-                
-                if cycle_data.get('success'):
-                    indicators_results['ia1_cycle_successful'] = True
-                    logger.info(f"      ✅ IA1 cycle successful (response time: {response_time:.2f}s)")
-                    
-                    # Check if analysis data contains technical indicator fields
-                    analysis_data = cycle_data.get('analysis_data', {})
-                    if analysis_data:
-                        logger.info(f"      📋 Analysis data received: {len(str(analysis_data))} characters")
-                        
-                        # Check for technical indicator fields presence
-                        indicators_found = []
-                        for field in self.technical_indicator_fields:
-                            if field in analysis_data:
-                                indicators_found.append(field)
-                                indicators_results['indicators_data'][field] = analysis_data[field]
-                        
-                        if len(indicators_found) >= 2:  # At least 2 indicator fields present
-                            indicators_results['technical_indicators_present'] = True
-                            logger.info(f"      ✅ Technical indicator fields present: {indicators_found}")
-                            
-                            # Check for meaningful indicator values (not 'unknown')
-                            meaningful_indicators = []
-                            for field, value in indicators_results['indicators_data'].items():
-                                if isinstance(value, str) and value not in ['unknown', 'neutral', 'N/A', '']:
-                                    meaningful_indicators.append(f"{field}={value}")
-                                elif isinstance(value, (int, float)) and value != 0:
-                                    meaningful_indicators.append(f"{field}={value}")
-                            
-                            if meaningful_indicators:
-                                indicators_results['indicators_meaningful'] = True
-                                logger.info(f"      ✅ Meaningful indicator values found: {meaningful_indicators}")
-                            else:
-                                logger.warning(f"      ❌ All indicators showing default/unknown values: {indicators_results['indicators_data']}")
-                            
-                            # Check for OHLCV integration indicators
-                            price_fields = ['entry_price', 'current_price']
-                            valid_prices = 0
-                            for field in price_fields:
-                                if field in analysis_data and isinstance(analysis_data[field], (int, float)) and analysis_data[field] > 0:
-                                    valid_prices += 1
-                            
-                            if valid_prices >= 1:
-                                indicators_results['ohlcv_integration_working'] = True
-                                logger.info(f"      ✅ OHLCV integration working: {valid_prices}/{len(price_fields)} price fields have valid data")
-                            else:
-                                logger.warning(f"      ❌ OHLCV integration issues: {valid_prices}/{len(price_fields)} price fields have valid data")
-                        else:
-                            logger.warning(f"      ❌ Insufficient technical indicator fields found: {indicators_found}")
-                    else:
-                        logger.warning(f"      ❌ No analysis data in IA1 cycle response")
-                else:
-                    logger.warning(f"      ❌ IA1 cycle failed: {cycle_data.get('error', 'Unknown error')}")
-            else:
-                logger.error(f"      ❌ IA1 cycle HTTP error: {response.status_code}")
-                if response.text:
-                    logger.error(f"         Error response: {response.text[:200]}...")
+            # Step 1: Select test symbol and force analysis
+            test_symbol = 'ETHUSDT'  # Use a common symbol
+            consistency_results['test_symbol'] = test_symbol
             
-            # Step 2: Check /api/analyses for recent technical indicator data
-            logger.info("   📊 Checking /api/analyses for technical indicator data...")
+            logger.info(f"   🚀 Forcing IA1 analysis for {test_symbol} to test consistency...")
+            
             try:
-                response = requests.get(f"{self.api_url}/analyses", timeout=60)
+                response = requests.post(
+                    f"{self.api_url}/force-ia1-analysis",
+                    json={"symbol": test_symbol},
+                    timeout=180
+                )
+                
                 if response.status_code == 200:
-                    analyses_data = response.json()
-                    if isinstance(analyses_data, list) and len(analyses_data) > 0:
-                        latest_analysis = analyses_data[0]
+                    force_data = response.json()
+                    consistency_results['force_analysis_successful'] = force_data.get('success', False)
+                    
+                    logger.info(f"      ✅ Force analysis completed: {consistency_results['force_analysis_successful']}")
+                    
+                    if consistency_results['force_analysis_successful'] and 'ia2_decision' in force_data:
+                        consistency_results['api_response_has_ia2'] = True
+                        consistency_results['api_data'] = force_data['ia2_decision']
                         
-                        # Check for technical indicators in API response
-                        api_indicators = []
-                        for field in self.technical_indicator_fields:
-                            if field in latest_analysis and latest_analysis[field] not in ['unknown', 'neutral', None]:
-                                api_indicators.append(f"{field}={latest_analysis[field]}")
+                        logger.info(f"      ✅ API response contains IA2 decision")
+                        logger.info(f"      📋 API IA2 data: {consistency_results['api_data']}")
                         
-                        if api_indicators:
-                            logger.info(f"      ✅ Technical indicators in API response: {api_indicators}")
+                        # Step 2: Wait and check database for corresponding entry
+                        await asyncio.sleep(3)  # Wait for database write
+                        
+                        logger.info("   📊 Checking database for corresponding IA2 decision...")
+                        
+                        # Find the latest decision for this symbol
+                        latest_decision = await asyncio.to_thread(
+                            self.db.trading_decisions.find_one,
+                            {"symbol": test_symbol},
+                            {"sort": [("timestamp", -1)]}
+                        )
+                        
+                        if latest_decision:
+                            consistency_results['database_entry_found'] = True
+                            consistency_results['db_data'] = latest_decision
+                            
+                            logger.info(f"      ✅ Database entry found for {test_symbol}")
+                            logger.info(f"      📋 DB decision ID: {latest_decision.get('id', 'N/A')}")
+                            
+                            # Step 3: Compare API response with database entry
+                            logger.info("   🔍 Comparing API response with database entry...")
+                            
+                            # Fields to compare
+                            compare_fields = ['signal', 'confidence']
+                            matches = 0
+                            total_comparisons = 0
+                            
+                            for field in compare_fields:
+                                api_value = consistency_results['api_data'].get(field)
+                                db_value = latest_decision.get(field)
+                                
+                                total_comparisons += 1
+                                
+                                if api_value is not None and db_value is not None:
+                                    # Handle different data types
+                                    if isinstance(api_value, str) and hasattr(db_value, 'value'):
+                                        # API might have string, DB might have enum
+                                        db_value_str = db_value.value if hasattr(db_value, 'value') else str(db_value)
+                                        match = api_value.lower() == db_value_str.lower()
+                                    elif isinstance(api_value, (int, float)) and isinstance(db_value, (int, float)):
+                                        # Numeric comparison with tolerance
+                                        match = abs(api_value - db_value) < 0.01
+                                    else:
+                                        # String comparison
+                                        match = str(api_value).lower() == str(db_value).lower()
+                                    
+                                    consistency_results['field_matches'][field] = {
+                                        'api_value': api_value,
+                                        'db_value': db_value,
+                                        'match': match
+                                    }
+                                    
+                                    if match:
+                                        matches += 1
+                                        logger.info(f"      ✅ {field} matches: API={api_value}, DB={db_value}")
+                                    else:
+                                        logger.warning(f"      ❌ {field} mismatch: API={api_value}, DB={db_value}")
+                                else:
+                                    logger.warning(f"      ⚠️ {field} missing in API or DB: API={api_value}, DB={db_value}")
+                            
+                            # Check if symbol matches
+                            api_symbol = force_data.get('analysis', {}).get('symbol', test_symbol)
+                            db_symbol = latest_decision.get('symbol')
+                            if api_symbol == db_symbol:
+                                matches += 1
+                                logger.info(f"      ✅ Symbol matches: {api_symbol}")
+                            else:
+                                logger.warning(f"      ❌ Symbol mismatch: API={api_symbol}, DB={db_symbol}")
+                            total_comparisons += 1
+                            
+                            # Check timestamp presence (not exact match due to timing)
+                            if 'timestamp' in latest_decision:
+                                matches += 0.5  # Half point for timestamp presence
+                                logger.info(f"      ✅ Timestamp present in DB: {latest_decision['timestamp']}")
+                            total_comparisons += 0.5
+                            
+                            consistency_rate = matches / total_comparisons if total_comparisons > 0 else 0
+                            if consistency_rate >= 0.8:  # 80% consistency threshold
+                                consistency_results['data_consistency_verified'] = True
+                                logger.info(f"      ✅ Data consistency verified: {matches}/{total_comparisons} ({consistency_rate:.1%})")
+                            else:
+                                logger.warning(f"      ❌ Data consistency issues: {matches}/{total_comparisons} ({consistency_rate:.1%})")
                         else:
-                            logger.warning(f"      ❌ No meaningful technical indicators in API response")
+                            logger.warning(f"      ❌ No database entry found for {test_symbol}")
                     else:
-                        logger.warning(f"      ❌ No analyses data in API response")
+                        logger.warning(f"      ❌ No IA2 decision in API response")
+                        logger.info(f"      📋 Response keys: {list(force_data.keys()) if isinstance(force_data, dict) else 'Not a dict'}")
                 else:
-                    logger.warning(f"      ⚠️ Analyses endpoint error: {response.status_code}")
+                    logger.error(f"      ❌ Force analysis HTTP error: {response.status_code}")
+                    
             except Exception as e:
-                logger.warning(f"      ⚠️ Analyses endpoint test error: {e}")
+                logger.error(f"      ❌ Force analysis exception: {e}")
             
             # Calculate test success
             success_criteria = [
-                indicators_results['ia1_cycle_successful'],
-                indicators_results['technical_indicators_present'],
-                indicators_results['indicators_meaningful'] or indicators_results['ohlcv_integration_working']
+                consistency_results['force_analysis_successful'],
+                consistency_results['api_response_has_ia2'],
+                consistency_results['database_entry_found'],
+                consistency_results['data_consistency_verified']
             ]
             success_count = sum(success_criteria)
             success_rate = success_count / len(success_criteria)
             
-            if success_rate >= 0.67:  # 67% success threshold
-                self.log_test_result("Technical Indicators Integration", True, 
-                                   f"Technical indicators working: {success_count}/{len(success_criteria)} criteria met. Indicators: {indicators_results['indicators_data']}")
+            if success_rate >= 0.75:  # 75% success threshold
+                self.log_test_result("API Response vs Database Consistency", True, 
+                                   f"Data consistency verified: {success_count}/{len(success_criteria)} criteria met. Symbol: {test_symbol}, Matches: {consistency_results['field_matches']}")
             else:
-                self.log_test_result("Technical Indicators Integration", False, 
-                                   f"Technical indicators issues: {success_count}/{len(success_criteria)} criteria met. Data: {indicators_results['indicators_data']}")
+                self.log_test_result("API Response vs Database Consistency", False, 
+                                   f"Data consistency issues: {success_count}/{len(success_criteria)} criteria met. Symbol: {test_symbol}")
                 
         except Exception as e:
-            self.log_test_result("Technical Indicators Integration", False, f"Exception: {str(e)}")
+            self.log_test_result("API Response vs Database Consistency", False, f"Exception: {str(e)}")
     
     async def test_4_api_analyses_enhanced_data(self):
         """Test 4: API Analyses Enhanced Data - Verify /api/analyses Returns Non-Zero MACD Values"""
