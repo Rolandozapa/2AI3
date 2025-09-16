@@ -4978,10 +4978,16 @@ IA1 ANALYSIS:
 - IA1 RR: {ia1_rr:.2f}:1
 
 IA1 TECHNICAL LEVELS:
+- Entry: ${analysis.entry_price:.4f}
+- Stop Loss: ${analysis.stop_loss_price:.4f} 
+- Take Profit: ${analysis.take_profit_price:.4f}
+- IA1 RR: {ia1_rr:.2f}:1
+
+IA2 STRATEGIC LEVELS (Confluence-based):
 - Entry: ${entry_price:.4f}
 - Stop Loss: ${stop_loss:.4f} 
 - Take Profit: ${tp1:.4f}
-- Calculated RR: {rr_ratio:.2f}:1
+- IA2 RR: {rr_ratio:.2f}:1
 
 TECHNICAL INDICATORS:
 - RSI: {analysis.rsi:.1f} ({analysis.rsi_signal})
