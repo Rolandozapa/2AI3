@@ -4632,6 +4632,80 @@ class UltraProfessionalIA2DecisionAgent:
         self.coindesk_api_key = os.environ.get('COINDESK_API_KEY')
         self.dune_api_key = os.environ.get('DUNE_API_KEY')
     
+    async def fetch_coindesk_ohlcv(self, symbol: str, days: int = 30) -> dict:
+        """Fetch OHLCV data from CoinDesk API for IA2 independent analysis"""
+        try:
+            import aiohttp
+            import pandas as pd
+            from datetime import datetime, timedelta
+            
+            # Convert symbol format (BTCUSDT -> btc for CoinDesk)
+            base_currency = symbol.replace('USDT', '').lower()
+            
+            # CoinDesk API endpoint
+            url = f"https://api.coindesk.com/v2/price/values/{base_currency}"
+            
+            headers = {
+                'X-CoinAPI-Key': self.coindesk_api_key,
+                'Accept': 'application/json'
+            }
+            
+            params = {
+                'start_time': (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d'),
+                'end_time': datetime.now().strftime('%Y-%m-%d'),
+                'period': '1d'
+            }
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers=headers, params=params) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        logger.info(f"✅ IA2 CoinDesk OHLCV fetched for {symbol}: {len(data.get('data', []))} data points")
+                        return data
+                    else:
+                        logger.warning(f"⚠️ IA2 CoinDesk API error for {symbol}: {response.status}")
+                        return {}
+                        
+        except Exception as e:
+            logger.error(f"❌ IA2 CoinDesk OHLCV fetch failed for {symbol}: {e}")
+            return {}
+    
+    async def fetch_dune_dex_data(self, symbol: str) -> dict:
+        """Fetch DEX volume and institutional metrics from Dune Analytics"""
+        try:
+            import aiohttp
+            
+            # Extract base token for Dune query
+            base_token = symbol.replace('USDT', '')
+            
+            # Dune Analytics DEX pair endpoint
+            url = "https://api.dune.com/api/v1/query/3238827/results"
+            
+            headers = {
+                'X-Dune-API-Key': self.dune_api_key,
+                'Content-Type': 'application/json'
+            }
+            
+            params = {
+                'filters': f'token_symbol = "{base_token}"',
+                'limit': 1000,
+                'sort_by': 'block_time desc'
+            }
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers=headers, params=params) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        logger.info(f"✅ IA2 Dune DEX data fetched for {symbol}: {len(data.get('result', {}).get('rows', []))} entries")
+                        return data
+                    else:
+                        logger.warning(f"⚠️ IA2 Dune API error for {symbol}: {response.status}")
+                        return {}
+                        
+        except Exception as e:
+            logger.error(f"❌ IA2 Dune DEX data fetch failed for {symbol}: {e}")
+            return {}
+    
     def calculate_neutral_risk_reward(self, current_price: float, volatility: float, time_horizon: int = 1) -> dict:
         """
         🎯 ADVANCED: Calculate risk/reward ratio without predefined direction
