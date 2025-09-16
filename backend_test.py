@@ -71,13 +71,13 @@ class IA2DecisionPersistenceTestSuite:
             backend_url = "http://localhost:8001"
         
         self.api_url = f"{backend_url}/api"
-        logger.info(f"Testing Pattern Detection & MACD Fixes at: {self.api_url}")
+        logger.info(f"Testing IA2 Decision Persistence Database Fix at: {self.api_url}")
         
         # MongoDB connection for direct database analysis
         try:
             self.mongo_client = MongoClient("mongodb://localhost:27017")
             self.db = self.mongo_client["myapp"]
-            logger.info("✅ MongoDB connection established for Pattern Detection & MACD testing")
+            logger.info("✅ MongoDB connection established for IA2 Decision Persistence testing")
         except Exception as e:
             logger.error(f"❌ MongoDB connection failed: {e}")
             self.mongo_client = None
@@ -86,14 +86,11 @@ class IA2DecisionPersistenceTestSuite:
         # Test results
         self.test_results = []
         
-        # Expected MACD fields
-        self.macd_fields = ['macd_signal', 'macd_line', 'macd_histogram', 'macd_trend']
+        # Expected IA2 decision fields
+        self.ia2_decision_fields = ['symbol', 'signal', 'confidence', 'timestamp', 'id']
         
-        # Expected pattern detection fields
-        self.pattern_fields = ['patterns', 'master_pattern']
-        
-        # Expected technical indicator fields
-        self.technical_indicator_fields = ['rsi_signal', 'mfi_signal', 'vwap_signal']
+        # Test symbols likely to trigger IA2 escalation
+        self.test_symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'ADAUSDT', 'LINKUSDT']
         
     def log_test_result(self, test_name: str, success: bool, details: str = ""):
         """Log test result"""
